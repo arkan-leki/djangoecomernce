@@ -1,0 +1,22 @@
+{% include 'store/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<body class="w-full" style="background-color: grey;">
+    <br>
+    <div class="container shadow-md p-5 bg-light w-50  rounded">
+        <div class="row text-center items-center">
+            <i class="col fa fa-credit-card fa-4x text-danger"></i>
+            <br>
+            <div class="text-center">
+                <h1><strong>Payment failed!</strong></h1>
+            </div>
+            <hr>
+            <h4>Your order was processed failed </h4>
+        </div>
+    </div>
+</body>
+
+{% endblock content %}

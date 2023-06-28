@@ -1,0 +1,63 @@
+{% include 'store/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<body class="w-full w-100">
+    <br>
+    <div class="container bg-white shadow-md p-4" style="width:50%; border-radius:20px;">
+        <h3>
+            <i class="fa fa-list-alt"></i>
+            Orders Management
+        </h3>
+        <hr>
+    </div>
+    <div class="container bg-white shadow-md p-4" style="width:50%; border-radius:20px;">
+        {% for order in orders %}
+        <div class="card p-2 rounded my-2">
+            <h5 class="card-header"> <strong>
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                    &nbsp;
+                    Order id - #{{ order.id }}</strong></h5>
+            <div class="card-body">
+                <p class="card-title">Order name : {{ order.full_name }}</p>
+                <p class="card-text">Customer Email :{{ order.email }}</p>
+                <p class="card-text">Total Amount Paid : ${{ order.amount_paid }}</p>
+                <p class="card-text">Order Date :{{ order.order_date }}</p>
+            </div>
+            <div class="card-body">
+                <h6>Order Items</h6>
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th scope="col">product</th>
+                            <th>quantity</th>
+                            <th>price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for item in order.orderitem_set.all %}
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            <td scope="col">{{ item.product }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.price }}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <br>
+</body>
+
+{% endblock content %}

@@ -1,0 +1,36 @@
+{% include 'store/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags  %}
+
+{% block content %}
+<body class="w-full w-100 " style="background-color: gray;">
+    <br>
+
+    <div class="container bg-white shadow-md p-5" style="width:50%; border-radius:20px;">
+        <h3>
+            Login to your account
+        </h3>
+        <h5> Purchase your favorite items today! </h5>
+        <br>
+        <br>
+        <form action="" method="post">
+
+            {% csrf_token %}
+            {{form|crispy}}
+            <div class="d-flex p-2">
+                <!-- Simple link -->
+                <a href="{% url 'password_reset' %}">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100 btnk-block p-2 ">
+                <li class="fa fa-key" aria-hidden="true"></li> &nbsp;  Login</button>
+            <hr>
+            <!-- Register buttons -->
+            <div class="text-center">
+                <p>Not a member? <a href="{% url 'register' %}"> <i class="fa fa-lock"  aria-hidden="true"></i> &nbsp; Register</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+
+{% endblock content %}
