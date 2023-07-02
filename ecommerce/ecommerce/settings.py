@@ -97,10 +97,6 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    'rds': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': env('DATABASE_NAME'),
         'USER': env('DATABASE_USER'),
@@ -108,6 +104,10 @@ DATABASES = {
         'HOST': 'database-ecommerce-v1.cxaw1emz4xnd.eu-central-1.rds.amazonaws.com',
         'PORT': '5432',
     },
+    'secondary': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
