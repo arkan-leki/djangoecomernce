@@ -3,6 +3,6 @@
     Thank you for registering on our website
     Please be kind and verifiy your email address by clicking the link below:
 
-    https://{{domain}}/{% url 'email-verification' uidb64=uid token=token %}
+    http://{{domain}}{% url 'email-verification' uidb64=uid token=token %}
 
 {% endautoescape %}

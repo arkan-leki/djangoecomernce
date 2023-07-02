@@ -36,7 +36,7 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
-# CSRF_TRUSTED_ORIGINS = ['http://ecommerce-dev.eu-central-1.elasticbeanstalk.com/']
+CSRF_TRUSTED_ORIGINS = ['http://ecommerce-dev.eu-central-1.elasticbeanstalk.com/']
 # Application definition
 
 INSTALLED_APPS = [
@@ -105,7 +105,7 @@ DATABASES = {
     #     'NAME': env('DATABASE_NAME'),
     #     'USER': env('DATABASE_USER'),
     #     'PASSWORD': env('DATABASE_PASS'),
-    #     'HOST': 'database-ecommerce-v1.cxaw1emz4xnd.eu-central-1.rds.amazonaws.com',
+    #     'HOST': 'djangoecomernce.cxaw1emz4xnd.eu-central-1.rds.amazonaws.com',
     #     'PORT': '5432',
     # }
 }
