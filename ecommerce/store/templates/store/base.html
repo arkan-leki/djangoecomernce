@@ -14,219 +14,95 @@
 
     <title> E-Commerce Django </title>
 
-
-
     <!-- CSS -->
-
-    <link rel="stylesheet" href="https://bootswatch.com/5/pulse/bootstrap.min.css">
-    <!-- <link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css"> -->
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-
-
-    <!-- JavaScript -->
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-
-
-    <!-- JavaScript Popper -->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
-        crossorigin="anonymous"></script>
-
-
 
     <!-- Bootstrap Max CDN -->
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
-
+    <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
 
 
 
-<nav class="navbar navbar-expand-lg bg-primary justify-content-center">
 
-
-    <a class="navbar-brand main-heading text-white" href="{% url 'store' %}">
-
-        &nbsp; &nbsp; Edenthought
-
-    </a>
-
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-
-        <span class="navbar-toggler-icon"></span>
-
-    </button>
-
-
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-
-            <li class="nav-item dropdown">
-
-                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-
-                    Categories
-
-                </a>
-
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                    <li>
-
-                        <a class="dropdown-item" href="{% url 'store' %}"> All </a>
-
-                    </li>
-
-                    
-                    {% for category in all_categories %}
-                        <li>
-                            <a class="dropdown-item" href="{{category.get_absolute_url}}">{{ category.name | capfirst }}</a>
-                        </li>
-                    {% endfor %}
-                        
-
-                </ul>
-
-            </li>
-
-        </ul>
-
-    </div>
-
-
-    <div class="collapse navbar-collapse text-center" id="navbarNavDropdown">
-
-        <ul class="navbar-nav ms-auto">
-
-            
-            {% if user.is_authenticated %}
-            
-            <li class="nav-item">
-
-                <a class="btn btn-alert navbar-btn text-white" type="button" href="{% url 'dashboard' %}">
-                    <i class="fa fa-home" aria-hidden="true"></i> &nbsp; Dashboard </a>
-
-            </li>
-
-
-            <li class="nav-item">
-
-                <a class="btn btn-alert navbar-btn text-white" type="button" href="{% url 'user-logout' %}">
-                    <i class="fa fa-sign-out" aria-hidden="true"></i> &nbsp;  Logout </a>
-
-            </li>
-            {% else %}
-            
-            <li class="nav-item">
-
-                <a class="btn btn-alert navbar-btn text-white item-center" type="button" href="{% url 'register' %}">
-                    <i class="fa fa-user-plus" aria-hidden="true"></i> &nbsp;  Register </a>
-
-            </li>
-
-
-            <li class="nav-item">
-
-                <a class="btn btn-alert navbar-btn text-white" type="button" href="{% url 'user-login' %}"> 
-                    <i class="fa fa-sign-in" aria-hidden="true"></i> &nbsp; Login </a>
-
-            </li>
-
-                
-            {% endif %}
-                
-
-            &nbsp; &nbsp; &nbsp;
-
-
-            <li class="nav-item">
-
-                <a type="button" role="button" href="{% url 'cart-summary' %}" class="btn btn-outline-secondary text-white">
-
-
-
-                    <i class="fa fa-shopping-cart" aria-hidden="true"> </i>
-                    &nbsp;
-                    <div id="cart-qyt" class="d-inline-flex">
-                        
-                        
-                        {% with cart|length as qyt_amount %}
-
-                            
-                            {% if qyt_amount > 0 %}
-                                {{ qyt_amount}}
-                                {% else %}
-                                0
-                            {% endif %}
-                                
-                            
-                        {% endwith %}
-                            
-
-
-                    </div>
-
-                </a>
-
-            </li>
-
-            &nbsp; &nbsp; &nbsp;
-
-
-        </ul>
-
-
-    </div>
-
-
-</nav>
-
-
-{% for message in messages %}
-    {% if message.level is DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-        <h6 id="message-timer" class="alert alert-success text-center">
-            <i class="fa fa-check-circle" aria-hidden="true"></i>
-            {{ message }}
-        </h6>
-    {% endif %}
-    {% if message.level is DEFAULT_MESSAGE_LEVELS.ERROR %}
-        <h6 id="message-timer" class="alert alert-danger text-center">
-            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-            {{ message }}
-        </h6>
-    {% endif %}
-    {% if message.level is DEFAULT_MESSAGE_LEVELS.INFO %}
-        <h6 id="message-timer" class="alert alert-info text-center">
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
-            {{ message }}
-        </h6>
-    {% endif %}
-    {% if message.level is DEFAULT_MESSAGE_LEVELS.WARNING %}
-        <h6 id="message-timer" class="alert alert-warning text-center">
-            <i class="fa fa-warning" aria-hidden="true"></i>
-            {{ message }}
-        </h6>
-    {% endif %}
-{% endfor %}
-    
 
 
 <body>
 
 
-    {% block content %}
+
+
+    <nav class="bg-purple-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 ">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="https://flowbite.com/" class="flex items-center text-white whitespace-nowrap rtl:space-x-reverse">
+                <strong class="self-center text-amber-500 text-2xl font-black">X</strong>
+                <span class="self-center text-2xl font-semibold">era</span>
+                <p class="text-2xl font-light">zone</p>
+            </a>
+            <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                <button type="button"
+                    class="text-white hover:text-gray-50  bg-amber-700 hover:bg-amber-800 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm px-4 py-2 text-center ">Get
+                    started</button>
+            </div>
+            <div class="items-center justify-between hidden w-full text-white md:flex md:w-auto md:order-1" id="navbar-sticky">
+                <ul
+                    class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-transparent md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
+                    <li>
+                        <a href="#"
+                            class="block py-2 px-3 font-black text-amber-500 rounded md:bg-transparent md:p-0 "
+                            aria-current="page">Home</a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="block py-2 px-3 text-white rounded  md:hover:text-amber-600 md:p-0  ">About</a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="block py-2 px-3 text-white rounded  md:hover:text-amber-600 md:p-0  ">Services</a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="block py-2 px-3 text-white rounded  md:hover:text-amber-600 md:p-0  ">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    {% for message in messages %}
+    {% if message.level is DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+    <h6 id="message-timer" class="alert alert-success text-center">
+        <i class="fa fa-check-circle" aria-hidden="true"></i>
+        {{ message }}
+    </h6>
+    {% endif %}
+    {% if message.level is DEFAULT_MESSAGE_LEVELS.ERROR %}
+    <h6 id="message-timer" class="alert alert-danger text-center">
+        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+        {{ message }}
+    </h6>
+    {% endif %}
+    {% if message.level is DEFAULT_MESSAGE_LEVELS.INFO %}
+    <h6 id="message-timer" class="alert alert-info text-center">
+        <i class="fa fa-info-circle" aria-hidden="true"></i>
+        {{ message }}
+    </h6>
+    {% endif %}
+    {% if message.level is DEFAULT_MESSAGE_LEVELS.WARNING %}
+    <h6 id="message-timer" class="alert alert-warning text-center">
+        <i class="fa fa-warning" aria-hidden="true"></i>
+        {{ message }}
+    </h6>
+    {% endif %}
+    {% endfor %}
+
+
+    <div class="mt-20 w-full">
+        {% block content %}
 
 
 
@@ -235,9 +111,91 @@
 
 
 
-    {% endblock %}
+        {% endblock %}
+    </div>
 
 
+
+
+    <div
+        class="fixed z-50 w-full h-16 max-w-lg -translate-x-1/2 border border-gray-200 rounded-full bottom-4 left-1/2  bg-purple-700  border-purple-600">
+        <div class="grid h-full max-w-lg grid-cols-5 mx-auto">
+            <button data-tooltip-target="tooltip-home" type="button"
+                class="inline-flex flex-col items-center justify-center px-5 rounded-s-full hover:bg-purple-800 group">
+                <svg class="w-5 h-5 mb-1 text-gray-100   group-hover:text-amber-500"
+                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
+                </svg>
+                <span class="sr-only">Home</span>
+            </button>
+            <div id="tooltip-home" role="tooltip"
+                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip  ">
+                Home
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <button data-tooltip-target="tooltip-wallet" type="button"
+                class="inline-flex flex-col items-center justify-center px-5 hover:bg-purple-800  group">
+                <svg class="w-5 h-5 mb-1 text-gray-100 group-hover:text-amber-500"
+                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M11.074 4 8.442.408A.95.95 0 0 0 7.014.254L2.926 4h8.148ZM9 13v-1a4 4 0 0 1 4-4h6V6a1 1 0 0 0-1-1H1a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h17a1 1 0 0 0 1-1v-2h-6a4 4 0 0 1-4-4Z" />
+                    <path
+                        d="M19 10h-6a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Zm-4.5 3.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2ZM12.62 4h2.78L12.539.41a1.086 1.086 0 1 0-1.7 1.352L12.62 4Z" />
+                </svg>
+                <span class="sr-only">Wallet</span>
+            </button>
+            <div id="tooltip-wallet" role="tooltip"
+                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip  ">
+                Wallet
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <div class="flex items-center justify-center">
+                <button data-tooltip-target="tooltip-new" type="button"
+                    class="inline-flex items-center justify-center w-10 h-10 font-medium  bg-amber-500 rounded-full hover:bg-amber-700 group focus:ring-4 focus:ring-amber-300 focus:outline-none dark:focus:ring-amber-800">
+                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 1v16M1 9h16" />
+                    </svg>
+                    <span class="sr-only">New item</span>
+                </button>
+            </div>
+            <div id="tooltip-new" role="tooltip"
+                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip  ">
+                Create new item
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <button data-tooltip-target="tooltip-settings" type="button"
+                class="inline-flex flex-col items-center justify-center px-5 hover:bg-purple-800 group">
+                <svg class="w-5 h-5 mb-1 text-gray-100 group-hover:text-amber-500 dark:group-hover:text-amber-500"
+                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2" />
+                </svg>
+                <span class="sr-only">Settings</span>
+            </button>
+            <div id="tooltip-settings" role="tooltip"
+                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip  ">
+                Settings
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <button data-tooltip-target="tooltip-profile" type="button"
+                class="inline-flex flex-col items-center justify-center px-5 rounded-e-full hover:bg-purple-800 group">
+                <svg class="w-5 h-5 mb-1 text-gray-100 group-hover:text-amber-500 dark:group-hover:text-amber-500"
+                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
+                </svg>
+                <span class="sr-only">Profile</span>
+            </button>
+            <div id="tooltip-profile" role="tooltip"
+                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip  ">
+                Profile
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+        </div>
+    </div>
 
 
 </body>
@@ -246,7 +204,7 @@
 <script>
     var message_timer = document.getElementById('message-timer');
 
-    setTimeout(function() {
+    setTimeout(function () {
         message_timer.style.display = 'none';
     }, 2500)
 
