@@ -30,6 +30,11 @@ class Product(models.Model):
     image= models.ImageField(upload_to='images/', blank=True)
 
     slug = models.SlugField(max_length=255)
+    
+    # Adding size and color as optional JSON fields
+    size = models.JSONField(blank=True, null=True)  # Store size options in JSON format
+    color = models.JSONField(blank=True, null=True)  # Store color options in JSON format
+
 
     class Meta:
         # db_table = 'product'

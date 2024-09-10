@@ -21,11 +21,13 @@ def cart_add(request):
     # Get the product_id and product_quantity from the POST data
     product_id = int(request.POST.get("product_id"))
     product_quantity = int(request.POST.get("product_quantity"))
+    size = request.POST.get("size")
+    color = request.POST.get("color")
 
     # Perform necessary operations with the product_id and product_quantity
     # For example, add the product to the user's shopping cart
     product = get_object_or_404(Product, pk=product_id)
-    cart.add(product=product, product_qyt=product_quantity)
+    cart.add(product=product, product_qyt=product_quantity, size=size, color=color)
 
     cart_quantity = cart.__len__()
 
