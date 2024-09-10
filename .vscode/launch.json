@@ -8,7 +8,7 @@
             "name": "Python: Django",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}\\ecommerce\\manage.py",
+            "program": "${workspaceFolder}/ecommerce/manage.py",
             "args": [
                 "runserver"
             ],

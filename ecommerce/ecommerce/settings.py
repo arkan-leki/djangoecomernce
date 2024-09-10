@@ -157,13 +157,13 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "arkan.leki@gmail.com"
-EMAIL_HOST_PASSWORD = "upnfoxeaycmnycdg"
+EMAIL_HOST_PASSWORD = "yuacvabggtidtgnz"
 
 
 # paypal popup
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
-USE_S3 = True
+USE_S3 = False
 
 if USE_S3:
     # Media AND STATIC FILE

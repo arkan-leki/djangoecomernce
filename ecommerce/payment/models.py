@@ -27,9 +27,20 @@ class ShippingAddress(models.Model):
 
     def __unicode__(self):
         return self.full_name
+    
 
 
 class Order(models.Model):
+    STATUSES = (
+        ("pending", "Order placed"),
+        ("processing", "Product packaging"),
+        ("shipped", "Ready for shipment"),
+        ("trucking", "On the way"),
+        ("arrived", "Dropped in the delivery station"),
+        ("delivered", "Delivered"),
+        ("out of stock", "Out of stock"),
+    )
+    
     # order_id = models.CharField(max_length=250, null=True, blank=True)
     full_name = models.CharField(max_length=250)
     email = models.EmailField(max_length=250)
@@ -43,6 +54,9 @@ class Order(models.Model):
 
     # author
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    
+    # choice field
+    order_status = models.CharField(max_length=20, choices=STATUSES, default="pending")
 
     class meta:
         verbose_name = "order"
