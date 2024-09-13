@@ -13,10 +13,11 @@
         </h3>
         <br>
         <br>
-        <form action="" method="post">
+        <form action="" method="post" enctype="multipart/form-data">
 
             {% csrf_token %}
             {{user_form|crispy}}
+            <img src="{{user_form.instance.get_avatar}}" alt="Image URL" height="100" width="100">
             <br>
             <br>
 

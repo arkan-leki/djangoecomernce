@@ -7,7 +7,7 @@ class ShippingForm(forms.ModelForm):
         model = ShippingAddress
         fields = [
             "full_name",
-            "email",
+            "phone",
             "address1",
             "address2",
             "city",
@@ -23,10 +23,10 @@ class ShippingForm(forms.ModelForm):
                     "required": True,
                 }
             ),
-            "email": forms.TextInput(
+            "phone": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Email Address",
+                    "placeholder": "Phone Number",
                     "required": True,
                 }
             ),

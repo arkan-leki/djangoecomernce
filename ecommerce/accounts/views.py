@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from accounts.tokens import user_activation_token
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
@@ -14,6 +14,8 @@ from django.contrib import messages
 from payment.form import ShippingForm
 
 from payment.models import ShippingAddress
+
+User = get_user_model()
 
 
 # Create your views here.
@@ -84,9 +86,10 @@ def user_login(request):
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
-            username = request.POST.get("username", "")
+            phone = request.POST.get("username", "")
             password = request.POST.get("password", "")
-            user = authenticate(username=username, password=password)
+            user = authenticate(request, phone=phone, password=password)
+            print(user)
             if user is not None:
                 auth.login(request, user)
                 messages.success(request, "You are successfully logged in")
@@ -111,9 +114,10 @@ def dashboard(request):
 
 @login_required(login_url="user-login")
 def profile(request):
+    # image file too
     user_form = UpdateUserForm(instance=request.user)
     if request.method == "POST":
-        user_form = UpdateUserForm(request.POST, instance=request.user)
+        user_form = UpdateUserForm(request.POST, request.FILES, instance=request.user)
         if user_form.is_valid():
             user_form.save()
             messages.info(request, "Profile updated successfully")

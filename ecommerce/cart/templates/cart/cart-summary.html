@@ -1,220 +1,84 @@
-{% include "store/base.html" %}
-
+{% extends "store/base.html" %}
 
 {% load static %}
 {% load mathfilters %}
 
-
 {% block content %}
-
-
-<main class="pt-5">
-
+<main class="pt-5" x-data="cart()">
   <div class="container">
-
-    <h1 class="h5"> Shopping cart </h1>
-
+    <h1 class="h5">Shopping Cart</h1>
     <hr>
 
-
-    {% for cart_item in cart %}
-
-
-    {% with cart_item.product as product %}
-
-    <br>
-
-    <div class="row mb-4 border product-item">
-
-      <div class="col-md-3 col-lg-2 order-md-first bg-light">
-
-        <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{product.image.url}}">
-        <!-- Product image -->
-
-      </div>
-
-
-      <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
-
-        <a href="{{product.get_absolute_url}}" class="text-decoration-none"> <!-- Product get absolute url -->
-
-          <h1 class="h5 pt-2"> {{product.title}} </h1>
-
-        </a>
-
-        <div class="border">
-
-          <div class="col border-bottom">
-
-            <div class="row p-3">
-
-              <div class="col-6"> Product </div>
-
-              <div class="col-6 text-end"><span class="h6 fw-bold">$ {{product.price|mul:cart_item.qyt}} </span></div>
-
-            </div>
-
-          </div>
-
-          <div class="col">
-
-            <div class="row p-3">
-
-              <div class="col-12">
-
-                <label for="select">Qty</label>
-
-                &nbsp;
-
-                <select id="select_{{product.id}}" class="custom-select px-2">
-
-                  <option selected>
-
-                    {{cart_item.qyt}}
-
-                  </option>
-
-                  <option value="1">1</option>
-
-                  <option value="2">2</option>
-
-                  <option value="3">3</option>
-
-                  <option value="4">4</option>
-
-                </select>
-                <br> <br>
-                <label for="size">Size:</label>
-                <span> {{cart_item.size}}</span>
-                <br> <br>
-                <label for="size">Color:</label>
-                <span> {{cart_item.color}}</span>
-
-                <br> <br>
-
-                <button type="button" data-index="{{product.id}}" class="btn btn-primary btn-sm update-button">
-                  Update
-
-                </button>
-
-                &nbsp;
-
-                <button type="button" data-index="{{product.id}}" class="btn btn-danger btn-sm delete-button">
-                  Delete
-
-                </button>
-
-
-              </div>
-
-            </div>
-
-          </div>
-
+    <template x-for="(item, index) in items" :key="index">
+      <div class="row mb-4 border product-item">
+        <div class="col-md-3 col-lg-2 order-md-first bg-light">
+          <img class="img-fluid mx-auto d-block" width="200px" :src="item.product.image" alt="Product image">
         </div>
 
+        <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
+          <a :href="item.product.url" class="text-decoration-none">
+            <h1 class="h5 pt-2" x-text="item.product.title"></h1>
+          </a>
+          <div class="border">
+            <div class="col border-bottom">
+              <div class="row p-3">
+                <div class="col-6">Product</div>
+                <div class="col-6 text-end">
+                  <span class="h6 fw-bold">$ <span x-text="item.price"></span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="row p-3">
+                <div class="col-12">
+                  <label for="quantity">Qty</label>
+                  <input 
+                    id="quantity"
+                    type="number"
+                    x-model.number="item.qyt"
+                    @change="updateQuantity(item)"
+                    min="1"
+                    class="form-control"
+                  >
+                  <br> <br>
+                  <label for="size">Size:</label>
+                  <span x-text="item.size"></span>
+                  <br> <br>
+                  <label for="color">Color:</label>
+                  <span x-text="item.color"></span>
+                  <br> <br>
+                 
+                  <button @click="updateQuantity(item)" class="btn btn-primary btn-sm">
+                    Update
+                  </button>
+                  &nbsp;
+                  <button @click="deleteItem(item.id)" class="btn btn-danger btn-sm">
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-    </div>
-
-    {% endwith %}
-
-
-    {% endfor %}
-
-
-
+    </template>
 
     <div class="col-12 text-end">
-
-      <div class="h6 fw-bold"> Sub total: $ <div id="total" class="d-inline-flex"> {{cart.get_total}} </div>
-      </div>
-      
+      <div class="h6 fw-bold">Sub total: $ <div id="total" class="d-inline-flex" x-text="total"></div></div>
       <hr>
-
       <a href="{% url 'checkout' %}" class="btn btn-primary my-2">
-        <i class="fa fa-chevron-circle-right"></i>
-        Proceed to checkout
+        <i class="fa fa-chevron-circle-right"></i> Proceed to checkout
       </a>
     </div>
-
-    
-
-
   </div>
-
-
 </main>
-
+<!-- Include CSRF Token and URL in data attributes -->
 <script>
-
-  $(document).on('click', '.delete-button', function (e) {
-
-    e.preventDefault();
-
-    $.ajax({
-
-      type: 'POST',
-      url: '{% url "cart-delete" %}',
-      data: {
-        product_id: $(this).data('index'),
-        csrfmiddlewaretoken: "{{csrf_token}}",
-        action: 'post'
-
-      },
-      success: function (json) {
-
-        location.reload(true);
-
-        document.getElementById('cart-qyt').textContent = json.cart_quantity;
-        document.getElementById('total').textContent = json.cart_total;
-
-
-      },
-
-      error: function (jqXHR, textStatus, errorThrown) {
-
-      }
-
-    });
-
-  });
-
-  $(document).on('click', '.update-button', function (e) {
-
-    e.preventDefault();
-
-    var theproductid = $(this).data('index');
-
-    $.ajax({
-
-      type: 'POST',
-      url: '{% url "cart-update" %}',
-      data: {
-        product_id: $(this).data('index'),
-        product_quantity: $('#select_' + theproductid + ' option:selected').text(),
-        csrfmiddlewaretoken: "{{csrf_token}}",
-        action: 'post'
-
-      },
-      success: function (json) {
-
-        location.reload(true);
-
-        document.getElementById('cart-qyt').textContent = json.cart_quantity;
-        document.getElementById('total').textContent = json.cart_total;
-
-
-      },
-
-      error: function (jqXHR, textStatus, errorThrown) {
-
-      }
-
-    });
-
-  });
-
+  window.csrfToken = "{{ csrf_token }}";
+  window.cartDataUrl = "{% url 'cart-data' %}";
+  window.cartUpdateUrl = "{% url 'cart-update' %}";
+  window.cartDeleteUrl = "{% url 'cart-delete' %}";
 </script>
 
 {% endblock %}
