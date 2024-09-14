@@ -149,12 +149,14 @@
               <h6>Product Categories</h6>
             </div>
             <div class="product-catagory-wrap">
-              <div class="row g-3">                
+              <div class="row g-2">                
                 <!-- Single Catagory Card -->
                 {% for category in all_categories %}
-                <div class="col-4">
-                  <div class="card catagory-card">
-                    <div class="card-body px-2"><a href="catagory.html"><img src="{{category.get_image_url}}" alt=""><span>{{category}}</span></a></div>
+                <div class="col-3">
+                  <div class="card catagory-card p-2">
+                    <div class="card-body px-2"><a href="catagory.html">
+                    <img src="{{category.get_image_url}}" alt="">
+                    <span>{{category}}</span></a></div>
                   </div>
                 </div>
                 {% endfor %}
@@ -207,7 +209,7 @@
         <!-- Cool Facts Area-->
         <div class="cta-area">
           <div class="container">
-            <div class="cta-text p-4 p-lg-5" style="background-image: url(img/bg-img/24.jpg)">
+            <div class="cta-text p-4 p-lg-5" style="background-image: url({% static 'img/bg-img/dark-bg.jpg' %})">
               <h4 class="text-white">On Sale 50% Off!</h4>
               <p class="text-white">Suha is a multipurpose, creative &amp; <br>modern mobile template.</p><a class="btn btn-warning" href="#">Shop Today</a>
             </div>
