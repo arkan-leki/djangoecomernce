@@ -45,6 +45,11 @@ class Product(models.Model):
     def __str__(self):
         return self.title
     
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        return ''
+    
     def get_absolute_url(self):
         return reverse("product-info", kwargs={"product_slug": self.slug})
     
