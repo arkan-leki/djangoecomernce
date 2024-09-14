@@ -1,12 +1,13 @@
 from django.shortcuts import get_object_or_404, render
 
-from store.models import Category, Product
+from store.models import Category, Product, Collection
 
 
 # Create your views here.
 def store(request):
     all_products = Product.objects.all()
-    context = {"all_products": all_products}
+    collections = Collection.objects.all()
+    context = {"all_products": all_products, "collections":collections}
     return render(request, "store/store.html", context=context)
 
 
