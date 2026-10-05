@@ -16,6 +16,13 @@ class CustomUserAdmin(BaseUserAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
 
+    # date_joined is defined with auto_now_add=True, i.e. editable=False, so it
+    # cannot be an editable form field. Listing it in fieldsets without also
+    # making it read-only raised FieldError on every user change page:
+    #   "'date_joined' cannot be specified for CustomUser model form as it is a
+    #    non-editable field."
+    readonly_fields = ('last_login', 'date_joined')
+
     # Fields to be used when creating a new user
     add_fieldsets = (
         (None, {
