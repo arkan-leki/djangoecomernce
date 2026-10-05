@@ -1,10 +1,15 @@
+import logging
+
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from cart.cart import Cart
+from payment.emails import send_order_emails
 from payment.models import Order
 
 from payment.models import ShippingAddress
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -89,6 +94,16 @@ def complete_order(request):
                     price=item["price"],
                 )
         order_success = True
+
+        # Confirmation to the customer + notification to the store. Wrapped in
+        # try/except inside send_order_emails so a mail failure can never undo
+        # an order that has already been written.
+        try:
+            sent_to = send_order_emails(order, site_url=request.build_absolute_uri("/"))
+            logger.info("Order #%s emails: %s", order.id, sent_to or "none")
+        except Exception:  # noqa: BLE001
+            logger.exception("Order #%s: unexpected failure sending emails", order.id)
+
         return JsonResponse({"success": order_success, "order_id": order.id})
     return JsonResponse(
         {"success": False, "error": "This endpoint expects action=complete_order."},

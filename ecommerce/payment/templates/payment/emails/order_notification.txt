@@ -1,0 +1,16 @@
+NEW ORDER #{{ order.id }}
+
+Total    : ${{ order.amount_paid }}
+Placed   : {{ order.order_date|date:"j F Y, H:i" }}
+Customer : {{ order.full_name|default:"—" }}
+Email    : {{ order.email|default:"—" }}
+Phone    : {{ order.phone|default:"—" }}
+{% if order.user %}Account  : {{ order.user.phone }}{% endif %}
+
+ITEMS
+{% for item in items %}  {{ item.quantity }} x {{ item.product.title }} @ ${{ item.price }}
+{% endfor %}
+SHIP TO
+{{ order.shipping_address }}
+
+Open in admin: /admin/payment/order/{{ order.id }}/change/

@@ -1,0 +1,25 @@
+{% load mathfilters %}Hello {{ order.full_name|default:"there" }},
+
+Thanks for your order! We have received it and it is now being processed.
+
+Order number : #{{ order.id }}
+Placed on    : {{ order.order_date|date:"j F Y, H:i" }}
+Order status : {{ order.get_order_status_display }}
+
+------------------------------------------------------------
+WHAT YOU ORDERED
+------------------------------------------------------------
+{% for item in items %}{{ item.quantity }} x {{ item.product.title }} — ${{ item.price }} each = ${{ item.price|mul:item.quantity }}
+{% endfor %}
+------------------------------------------------------------
+TOTAL: ${{ order.amount_paid }}
+------------------------------------------------------------
+
+DELIVERING TO
+{{ order.shipping_address }}
+
+Contact phone: {{ order.phone|default:"—" }}
+
+If anything above looks wrong, just reply to this email and we will sort it out.
+
+Thank you for shopping with us.

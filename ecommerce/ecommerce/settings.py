@@ -175,6 +175,16 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+
+# Without this Django sends as webmaster@localhost and Gmail rejects it with
+# "Sender address rejected: not owned by user". Gmail only accepts the
+# authenticated account (or a verified alias) as the From address.
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER or "webmaster@localhost")
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# Where "new order" notifications are sent (the shop owner).
+STORE_ORDER_EMAIL = env("STORE_ORDER_EMAIL", default=EMAIL_HOST_USER)
+
 # In development, print emails (e.g. the account-activation link) to the console
 # instead of sending them through the real account.
 if DEBUG and env.bool("EMAIL_CONSOLE_IN_DEBUG", default=False):
