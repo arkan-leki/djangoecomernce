@@ -46,7 +46,10 @@ class Order(models.Model):
     # order_id = models.CharField(max_length=250, null=True, blank=True)
     full_name = models.CharField(max_length=250)
     email = models.EmailField(max_length=250, null=True, blank=True)
-    phone = models.CharField(max_length=250, unique=True)
+    # NOTE: this was unique=True with no blank/null and complete_order() never
+    # passed a value, so every order after the first raised IntegrityError
+    # (UNIQUE constraint failed: payment_order.phone) and returned HTTP 500.
+    phone = models.CharField(max_length=250, unique=True, null=True, blank=True)
     # shipping_address = models.ForeignKey(
     #     ShippingAddress, on_delete=models.CASCADE, null=True, blank=True
     # )

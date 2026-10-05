@@ -1,36 +1,60 @@
-{% include 'store/base.html' %}
-
+{% extends 'store/base.html' %}
 {% load static %}
-{% load crispy_forms_tags  %}
+
+{% block title %}Log In{% endblock %}
 
 {% block content %}
-<body class="w-full w-100 " style="background-color: gray;">
-    <br>
+    <!-- Login Wrapper Area-->
+    <div class="login-wrapper d-flex align-items-center justify-content-center text-center">
+      <!-- Background Shape-->
+      <div class="background-shape"></div>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-10 col-lg-8"><img class="big-logo" src="{% static 'img/core-img/logo-white.png' %}" alt="" style="max-width: 120px;">
+            <!-- Login Form-->
+            <div class="register-form mt-5">
+              <form action="{% url 'user-login' %}" method="post">
+                {% csrf_token %}
 
-    <div class="container bg-white shadow-md p-5" style="width:50%; border-radius:20px;">
-        <h3>
-            Login to your account
-        </h3>
-        <h5> Purchase your favorite items today! </h5>
-        <br>
-        <br>
-        <form action="" method="post">
+                {% if form.non_field_errors %}
+                  <div class="alert alert-danger text-start mb-3">
+                    {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+                {% if messages %}
+                  {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} mb-3">{{ message }}</div>
+                  {% endfor %}
+                {% endif %}
 
-            {% csrf_token %}
-            {{form|crispy}}
-            <div class="d-flex p-2">
-                <!-- Simple link -->
-                <a href="{% url 'password_reset' %}">Forgot password?</a>
+                <div class="form-group text-start mb-4">
+                  <span>Phone</span>
+                  <label for="id_username"><i class="fa-solid fa-user"></i></label>
+                  <input class="form-control" id="id_username" type="text" name="username"
+                         placeholder="07XX XXX XXXX" value="{{ form.username.value|default:'' }}" required>
+                  {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="form-group text-start mb-4">
+                  <span>Password</span>
+                  <label for="id_password"><i class="fa-solid fa-key"></i></label>
+                  <input class="form-control" id="id_password" type="password" name="password"
+                         placeholder="Password" required>
+                  {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>{% endif %}
+                </div>
+
+                <button class="btn btn-warning btn-lg w-100" type="submit">Log In</button>
+              </form>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg w-100 btnk-block p-2 ">
-                <li class="fa fa-key" aria-hidden="true"></li> &nbsp;  Login</button>
-            <hr>
-            <!-- Register buttons -->
-            <div class="text-center">
-                <p>Not a member? <a href="{% url 'register' %}"> <i class="fa fa-lock"  aria-hidden="true"></i> &nbsp; Register</a></p>
+            <!-- Login Meta-->
+            <div class="login-meta-data">
+              <a class="forgot-password d-block mt-3 mb-1" href="{% url 'password_reset' %}">Forgot Password?</a>
+              <p class="mb-0">Didn't have an account?<a class="mx-1" href="{% url 'register' %}">Register Now</a></p>
             </div>
-        </form>
+            <!-- View As Guest-->
+            <div class="view-as-guest mt-3"><a class="btn" href="{% url 'store' %}">View as Guest</a></div>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
-
-{% endblock content %}
+{% endblock %}

@@ -1,356 +1,254 @@
-{% include "store/base.html" %}
-
-
+{% extends 'store/base.html' %}
 {% load static %}
 
+{% block title %}Checkout - Suha Store{% endblock %}
+{% block meta_description %}Enter your billing information and confirm your Suha Store order.{% endblock %}
 
 {% block content %}
-
-<style>
-    body {
-
-        background-color: gray;
-
-    }
-</style>
-
-
-<body>
-
-    <br>
-
-    <div class="container bg-white shadow-md p-5" style="width:500px; border-radius:20px;">
-
-        <form id="ckeckout-form" onsubmit="event.preventDefault();">
-            {% csrf_token %}
-            <div>
-
-                <h3> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> &nbsp; Complete your order </h3>
-
-                <p> Please enter in the relevant information below. </p>
-
-
-
-                <hr>
-
-                <br>
-
-                <div class="form-field">
-
-                    <input class="form-control validate" id="name" type="text" placeholder="Full name*"
-                        autocomplete="off" value="{{shipping_address.full_name}}" required>
-
-                </div>
-
-
-                <br>
-
-
-                <div class="form-field">
-
-                    <input class="form-control validate" id="email" type="email" placeholder="Email address*"
-                        autocomplete="off" value="{{shipping_address.email}}" required>
-
-                </div>
-
-
-                <br>
-
-
-                <div class="form-field">
-
-                    <input class="form-control validate" id="address1" type="text" placeholder="Address 1*"
-                        autocomplete="off" value="{{shipping_address.address1}}" required>
-
-                </div>
-
-
-                <br>
-
-
-                <div class="form-field">
-
-                    <input class="form-control validate" id="address2" type="text" placeholder="Address 2*"
-                        autocomplete="off" value="{{shipping_address.address2}}" required>
-
-                </div>
-
-
-                <br>
-
-
-                <div class="form-field">
-
-                    <input class="form-control validate" id="city" type="text" placeholder="City*" autocomplete="off"
-                        value="{{shipping_address.city}}" required>
-
-                </div>
-
-
-                <br>
-
-
-                <div class="form-field">
-
-                    <input class="form-control" id="state" type="text" placeholder="State (Optional)" autocomplete="off"
-                        value="{{shipping_address.state}}">
-
-                </div>
-
-
-                <br>
-
-
-                <div class="form-field">
-
-                    <input class="form-control" id="zipcode" type="text" placeholder="Zip code (Optional)"
-                        autocomplete="off" value="{{shipping_address.zip_code}}">
-
-                </div>
-
-            </div>
-
-            <br>
-
-            <p id="alert" class="alert alert-danger">Required Fill Field</p>
-
-            <button id="complete-order" type="submit"
-                class="btn btn-primary navbar-btn text-white w-100 font-bold py-2 mb-3"> &nbsp; Complete order </button>
-
-
-            <br>
-
-            <!-- PayPal button container -->
-
-            <div id="paypal-button-container"></div>
-
-
-            <!-- PayPal client ID integration -->
-
-            <script
-                src="https://www.paypal.com/sdk/js?client-id=AVPBPEq20b_OYeke7fr7tRcsrymv-5oK_NmjACBhXOqEv5JI1E935Y4G-8-Kh_LUL9t6sy7RkStyiKwm&currency=USD&intent=capture&enable-funding=venmo"
-                data-sdk-integration-source="integrationbuilder"></script>
-
-
-
-        </form>
-
-
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'cart-summary' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">Billing Information</h6>
+        </div>
+      </div>
     </div>
 
+    <div class="page-content-wrapper">
+      <div class="container">
+        <!-- Checkout Wrapper-->
+        <div class="checkout-wrapper-area py-3">
 
+          {% if not cart|length %}
+            <!-- Empty Basket-->
+            <div class="card mb-3">
+              <div class="card-body text-center py-4">
+                <i class="fa-solid fa-bag-shopping fa-2x mb-3"></i>
+                <h6>Your basket is empty</h6>
+                <p class="mb-3">Add a product to your basket before you check out.</p>
+                <a class="btn btn-warning" href="{% url 'store' %}">Browse products</a>
+              </div>
+            </div>
+          {% else %}
 
-    <br>
+          <!-- Order Summary-->
+          <div class="cart-table card mb-3">
+            <div class="table-responsive card-body">
+              <table class="table mb-0">
+                <tbody>
+                  {% for item in cart %}
+                    <tr>
+                      <td>
+                        <img class="rounded" src="{% if item.product.get_image_url %}{{ item.product.get_image_url }}{% else %}{% static 'img/product/10.png' %}{% endif %}" alt="{{ item.product.title }}">
+                      </td>
+                      <td>
+                        <a href="{{ item.product.get_absolute_url }}">{{ item.product.title }}<span>${{ item.price }} &times; {{ item.qyt }}{% if item.size %} &middot; {{ item.size }}{% endif %}{% if item.color %} &middot; {{ item.color }}{% endif %}</span></a>
+                      </td>
+                      <td>
+                        <div class="quantity">
+                          <input class="qty-text" type="text" value="{{ item.qyt }}" readonly>
+                        </div>
+                      </td>
+                      <td>${{ item.total }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
+          <!-- Billing Form -->
+          <form id="checkout-form" action="{% url 'complete-order' %}" method="post">
+            {% csrf_token %}
+            <!-- payment/views.py complete_order() requires this flag -->
+            <input type="hidden" name="action" value="complete_order">
 
-</body>
+            <!-- Billing Address-->
+            <div class="billing-information-card mb-3">
+              <div class="card billing-information-title-card bg-danger">
+                <div class="card-body">
+                  <h6 class="text-center mb-0 text-white">Billing Information</h6>
+                </div>
+              </div>
+              <div class="card user-data-card">
+                <div class="card-body">
 
+                  {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                  {% endif %}
 
-<!-- Ajax integration -->
+                  <div class="mb-3">
+                    <label for="name">{% firstof form.full_name.label "Full Name*" %}</label>
+                    {# accounts.CustomUser extends AbstractBaseUser: it has no get_full_name()/username, only first_name/last_name/phone #}
+                    <input class="form-control" id="name" name="name" type="text" placeholder="Full Name" autocomplete="name" value="{% if shipping_address.full_name %}{{ shipping_address.full_name }}{% elif user.get_full_name %}{{ user.get_full_name }}{% elif user.first_name %}{{ user.first_name }}{% if user.last_name %} {{ user.last_name }}{% endif %}{% elif user.phone %}{{ user.phone }}{% endif %}" required>
+                    {% if form.full_name.errors %}<div class="invalid-feedback d-block">{{ form.full_name.errors }}</div>{% endif %}
+                  </div>
 
+                  <div class="mb-3">
+                    <label for="email">{% firstof form.email.label "Email Address*" %}</label>
+                    <input class="form-control" id="email" name="email" type="email" placeholder="care@example.com" autocomplete="email" value="{% firstof shipping_address.email user.email '' %}" required>
+                    {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors }}</div>{% endif %}
+                  </div>
 
-<!-- PayPal JS SDK -->
+                  <div class="mb-3">
+                    <label for="phone">{% firstof form.phone.label "Phone*" %}</label>
+                    <input class="form-control" id="phone" name="phone" type="tel" placeholder="+880 000 111 222" autocomplete="tel" value="{% firstof shipping_address.phone '' %}" required>
+                    {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors }}</div>{% endif %}
+                  </div>
 
+                  <div class="mb-3">
+                    <label for="address1">{% firstof form.address1.label "Address Line 1*" %}</label>
+                    <input class="form-control" id="address1" name="address1" type="text" placeholder="28/C Green Road" autocomplete="address-line1" value="{% firstof shipping_address.address1 '' %}" required>
+                    {% if form.address1.errors %}<div class="invalid-feedback d-block">{{ form.address1.errors }}</div>{% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="address2">{% firstof form.address2.label "Address Line 2*" %}</label>
+                    <input class="form-control" id="address2" name="address2" type="text" placeholder="Apartment, suite, unit" autocomplete="address-line2" value="{% firstof shipping_address.address2 '' %}" required>
+                    {% if form.address2.errors %}<div class="invalid-feedback d-block">{{ form.address2.errors }}</div>{% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="city">{% firstof form.city.label "City*" %}</label>
+                    <input class="form-control" id="city" name="city" type="text" placeholder="City" autocomplete="address-level2" value="{% firstof shipping_address.city '' %}" required>
+                    {% if form.city.errors %}<div class="invalid-feedback d-block">{{ form.city.errors }}</div>{% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="state">{% firstof form.state.label "State (Optional)" %}</label>
+                    <input class="form-control" id="state" name="state" type="text" placeholder="State (Optional)" autocomplete="address-level1" value="{% firstof shipping_address.state '' %}">
+                    {% if form.state.errors %}<div class="invalid-feedback d-block">{{ form.state.errors }}</div>{% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="zipcode">{% firstof form.zip_code.label "Zip Code (Optional)" %}</label>
+                    <input class="form-control" id="zipcode" name="zipcode" type="text" placeholder="Zip Code (Optional)" autocomplete="postal-code" value="{% firstof shipping_address.zip_code '' %}">
+                    {% if form.zip_code.errors %}<div class="invalid-feedback d-block">{{ form.zip_code.errors }}</div>{% endif %}
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Shipping Method Choose-->
+            <div class="shipping-method-choose mb-3">
+              <div class="card shipping-method-choose-title-card bg-success">
+                <div class="card-body">
+                  <h6 class="text-center mb-0 text-white">Shipping Method Choose</h6>
+                </div>
+              </div>
+              <div class="card shipping-method-choose-card">
+                <div class="card-body">
+                  <div class="shipping-method-choose">
+                    <ul class="ps-0">
+                      <li>
+                        <input id="fastShipping" type="radio" name="shipping_method" value="fast" checked>
+                        <label for="fastShipping">Fast Shipping<span>1 days delivary for $1.0</span></label>
+                        <div class="check"></div>
+                      </li>
+                      <li>
+                        <input id="normalShipping" type="radio" name="shipping_method" value="regular">
+                        <label for="normalShipping">Reguler<span>3-7 days delivary for $0.4</span></label>
+                        <div class="check"></div>
+                      </li>
+                      <li>
+                        <input id="courier" type="radio" name="shipping_method" value="courier">
+                        <label for="courier">Courier<span>5-8 days delivary for $0.3</span></label>
+                        <div class="check"></div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cart Amount Area-->
+            <div class="card cart-amount-area">
+              <div class="card-body d-flex align-items-center justify-content-between">
+                <h5 class="total-price mb-0">${{ cart.get_total }}</h5>
+                <button id="complete-order" class="btn btn-warning" type="submit">Confirm &amp; Pay</button>
+              </div>
+            </div>
+            <!-- Surfaces the real reason a checkout was rejected (empty basket,
+                 server error) instead of silently bouncing to a failure page -->
+            <div id="checkout-error" class="alert alert-danger mt-3 mb-0" style="display:none;" role="alert"></div>
+          </form>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-
-    var total_price = '{{cart.get_total}}';
-
-    const paypalButtonsComponent = paypal.Buttons({
-        // optional styling for buttons
-        // https://developer.paypal.com/docs/checkout/standard/customize/buttons-style-guide/
-        style: {
-            color: "gold",
-            shape: "rect",
-            layout: "vertical"
-        },
-
-        onInit: function (data, actions) {
-            actions.disable();
-            $('#alert').show();
-
-            document.querySelectorAll('.validate').forEach(item => {
-                item.addEventListener('keyup', event => {
-                    var order_verified = true;
-
-                    function checkInputs() {
-                        $(':input[required]').each(function () {
-                            if ($(this).val() == '') {
-                                return order_verified = false;
-                            }
-                        });
-
-                        return order_verified;
-                    }
-
-                    var isOrderVerified = checkInputs();
-
-                    if (isOrderVerified) {
-                        actions.enable();
-                        $('#alert').hide();
-
-                    } else {
-                        actions.disable();
-                        $('#alert').show();
-
-                    }
-                });
-            });
-
-
-            var order_verified = true;
-
-            function checkInputs() {
-                $(':input[required]').each(function () {
-                    if ($(this).val() == '') {
-                        return order_verified = false;
-                    }
-                });
-
-                return order_verified;
-            }
-
-            var isOrderVerified = checkInputs();
-
-            if (isOrderVerified) {
-                actions.enable();
-                $('#alert').hide();
-
-            } else {
-                actions.disable();
-                $('#alert').show();
-
-            }
-
-        },
-
-        // set up the transaction
-        createOrder: (data, actions) => {
-            // pass in any options from the v2 orders create call:
-            // https://developer.paypal.com/api/orders/v2/#orders-create-request-body
-            const createOrderPayload = {
-                purchase_units: [
-                    {
-                        amount: {
-                            value: total_price
-                        }
-                    }
-                ]
-            };
-
-            return actions.order.create(createOrderPayload);
-        },
-
-        // finalize the transaction
-        onApprove: (data, actions) => {
-            const captureOrderHandler = (details) => {
-                const payerName = details.payer.name.given_name;
-                console.log('Transaction completed');
-
-                // Get the CSRF token value from the form
-                var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-
-                // Get the form data
-                var formData = $(this).serialize();
-                console.log(formData);
-                // Send the AJAX request
-                $.ajax({
-                    url: "{% url 'complete-order' %}",
-                    type: 'POST',
-                    data: {
-                        'name': $('#name').val(),
-                        'email': $('#email').val(),
-                        'address1': $('#address1').val(),
-                        'address2': $('#address2').val(),
-                        'city': $('#city').val(),
-                        'state': $('#state').val(),
-                        'zipcode': $('#zipcode').val(),
-                        'action': 'complete_order'
-                    },
-                    headers: {
-                        'X-CSRFToken': csrfToken  // Add the CSRF token to the request headers
-                    },
-                    success: function (response) {
-                        console.log(response);
-                        window.location.replace("{% url 'payment-success' %}");
-                    },
-                    error: function (xhr, status, error) {
-                        console.log(error);
-                        window.location.replace("{% url 'payment-failed' %}");
-
-                    }
-                });
-
-            };
-
-            return actions.order.capture().then(captureOrderHandler);
-        },
-
-        // handle unrecoverable errors
-        onError: (err) => {
-            console.error('An error prevented the buyer from checking out with PayPal');
-
-
-
+  // payment/views.py complete_order() answers with JSON, so the form is posted
+  // with fetch() and the browser is then sent to the success/failed page.
+  (function () {
+    var form = document.getElementById('checkout-form');
+    var button = document.getElementById('complete-order');
+    if (!form || !window.fetch) {
+      return;
+    }
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      if (button) {
+        button.disabled = true;
+      }
+      // NOTE: do NOT use form.action — the form contains
+      // <input type="hidden" name="action">, and a named form control shadows
+      // the form's own `action` property. form.action therefore returns that
+      // <input> element and fetch() posted to "[object HTMLInputElement]"
+      // (404), which is what sent every shopper to the failed page.
+      var actionUrl = form.getAttribute('action') || "{% url 'complete-order' %}";
+      var data = new FormData(form);
+      fetch(actionUrl, {
+        method: 'POST',
+        body: data,
+        credentials: 'same-origin',
+        headers: {
+          'X-CSRFToken': window.csrfToken || data.get('csrfmiddlewaretoken') || '',
+          'X-Requested-With': 'XMLHttpRequest'
         }
-    });
-
-    paypalButtonsComponent
-        .render("#paypal-button-container")
-        .catch((err) => {
-            console.error('PayPal Buttons failed to render');
-        });
-
-</script>
-
-<script>
-
-
-    $(document).ready(function () {
-        $('#ckeckout-form').submit(function (event) {
-            event.preventDefault();
-
-            // Get the CSRF token value from the form
-            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-
-            // Get the form data
-            var formData = $(this).serialize();
-            console.log(formData);
-            // Send the AJAX request
-            $.ajax({
-                url: "{% url 'complete-order' %}",
-                type: 'POST',
-                data: {
-                'name': $('#name').val(),
-                'email': $('#email').val(),
-                'address1': $('#address1').val(),
-                'address2': $('#address2').val(),
-                'city': $('#city').val(),
-                'state': $('#state').val(),
-                'zipcode': $('#zipcode').val(),
-                'action': 'complete_order'
-            },
-                headers: {
-                'X-CSRFToken': csrfToken  // Add the CSRF token to the request headers
-            },
-                success: function (response) {
-                    console.log(response);
-                    window.location.replace("{% url 'payment-success' %}");
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                    window.location.replace("{% url 'payment-failed' %}");
-
-                }
-              });
-    });
+      })
+        .then(function (response) {
+          return response.json().then(function (payload) {
+            return { ok: response.ok, payload: payload };
           });
-
-
-
-</script> 
-
-
-
-
-
+        })
+        .then(function (result) {
+          if (result.ok && result.payload && result.payload.success) {
+            window.location.replace("{% url 'payment-success' %}");
+            return;
+          }
+          // A rejection with a reason (e.g. "Your basket is empty.") is shown on
+          // the page; only a genuinely unexplained failure goes to failed.html.
+          var reason = result.payload && result.payload.error;
+          var box = document.getElementById('checkout-error');
+          if (reason) {
+            if (box) {
+              box.textContent = reason;
+              box.style.display = '';
+            }
+            if (button) {
+              button.disabled = false;
+            }
+            if (reason.toLowerCase().indexOf('empty') !== -1) {
+              window.setTimeout(function () {
+                window.location.replace("{% url 'cart-summary' %}");
+              }, 1500);
+            }
+            return;
+          }
+          window.location.replace("{% url 'payment-failed' %}");
+        })
+        .catch(function () {
+          window.location.replace("{% url 'payment-failed' %}");
+        });
+    });
+  })();
+</script>
 {% endblock %}

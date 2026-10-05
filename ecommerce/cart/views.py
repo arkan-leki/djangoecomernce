@@ -98,7 +98,6 @@ def cart_delete(request):
         return JsonResponse({"success": False, "error": "No cart item ID provided"}, status=400)
 
     # Delete the cart item
-    print(cart_item_id)
     cart.delete(cart_item_id)
 
     # Get cart summary data

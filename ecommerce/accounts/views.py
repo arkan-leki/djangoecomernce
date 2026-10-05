@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from payment.form import ShippingForm
 
-from payment.models import ShippingAddress
+from payment.models import Order, ShippingAddress
 
 User = get_user_model()
 
@@ -89,7 +89,6 @@ def user_login(request):
             phone = request.POST.get("username", "")
             password = request.POST.get("password", "")
             user = authenticate(request, phone=phone, password=password)
-            print(user)
             if user is not None:
                 auth.login(request, user)
                 messages.success(request, "You are successfully logged in")
@@ -108,8 +107,15 @@ def user_logout(request):
 
 
 @login_required(login_url="user-login")
+@login_required(login_url="user-login")
 def dashboard(request):
-    return render(request, "accounts/dashboard.html")
+    orders = Order.objects.filter(user=request.user).order_by("-order_date")
+    context = {
+        "orders": orders,
+        "orders_count": orders.count(),
+        "shipping_address": ShippingAddress.objects.filter(user=request.user).first(),
+    }
+    return render(request, "accounts/dashboard.html", context)
 
 
 @login_required(login_url="user-login")

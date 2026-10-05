@@ -1,22 +1,41 @@
-{% include 'store/base.html' %}
+{% extends 'store/base.html' %}
 {% load static %}
 
+{% block title %}Payment Failed - Suha Store{% endblock %}
+{% block meta_description %}Your Suha Store payment could not be processed.{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Failure variant of Suha's .order-success-wrapper gradient */
+  .order-success-wrapper.order-failed-wrapper {
+    background: #ea4c62;
+    background: -o-linear-gradient(right, #ea4c62, #b02a37);
+    background: -webkit-gradient(linear, right top, left top, from(#ea4c62), to(#b02a37));
+    background: linear-gradient(to left, #ea4c62, #b02a37);
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-
-<body class="w-full" style="background-color: grey;">
-    <br>
-    <div class="container shadow-md p-5 bg-light w-50  rounded">
-        <div class="row text-center items-center">
-            <i class="col fa fa-credit-card fa-4x text-danger"></i>
-            <br>
-            <div class="text-center">
-                <h1><strong>Payment failed!</strong></h1>
-            </div>
-            <hr>
-            <h4>Your order was processed failed </h4>
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'store' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">Payment Status</h6>
         </div>
+      </div>
     </div>
-</body>
 
-{% endblock content %}
+    <!-- Order/Payment Failed-->
+    <div class="order-success-wrapper order-failed-wrapper">
+      <div class="content"><i class="fa-solid fa-circle-exclamation"></i>
+        <h5 class="text-white">Payment failed</h5>
+        <p class="text-white opacity-75">Your payment could not be processed and no order was placed. Your basket is still saved - please try again.</p>
+        <a class="btn btn-warning mt-3" href="{% url 'cart-summary' %}">Back to Basket</a>
+        <a class="btn btn-outline-light mt-2" href="{% url 'store' %}">Continue Shopping</a>
+      </div>
+    </div>
+{% endblock %}

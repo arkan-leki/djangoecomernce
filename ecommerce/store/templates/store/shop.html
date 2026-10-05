@@ -1,0 +1,186 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Shop{% if active_category %} - {{ active_category.name }}{% endif %}{% endblock %}
+
+{% block content %}
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'store' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">{% if active_category %}{{ active_category.name }}{% elif search_query %}&ldquo;{{ search_query }}&rdquo;{% else %}Shop{% endif %}</h6>
+        </div>
+        <!-- Filter Option-->
+        <div class="filter-option ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaFilterOffcanvas" aria-controls="suhaFilterOffcanvas"><i class="fa-solid fa-sliders"></i></div>
+      </div>
+    </div>
+
+    <!-- Filter Offcanvas-->
+    <div class="offcanvas offcanvas-start suha-filter-offcanvas-wrap" tabindex="-1" id="suhaFilterOffcanvas" aria-labelledby="suhaFilterOffcanvasLabel">
+      <button class="btn-close text-reset" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <div class="offcanvas-body py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <form action="{% url 'shop' %}" method="get">
+                <!-- keep the current view mode + sort while filtering -->
+                <input type="hidden" name="view" value="{{ view_mode }}">
+                {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+
+                <!-- Search -->
+                <div class="widget mb-4">
+                  <h6 class="widget-title mb-2">Search</h6>
+                  <div class="widget-desc">
+                    <input class="form-control" type="search" name="q" value="{{ search_query }}" placeholder="Product name">
+                  </div>
+                </div>
+
+                <!-- Category -->
+                <div class="widget catagory mb-4">
+                  <h6 class="widget-title mb-2">Category</h6>
+                  <div class="widget-desc">
+                    <div class="form-check">
+                      <input class="form-check-input" id="catAll" type="radio" name="category" value="" {% if not category_slug %}checked{% endif %}>
+                      <label class="form-check-label" for="catAll">All products</label>
+                    </div>
+                    {% for category in all_categories %}
+                      <div class="form-check">
+                        <input class="form-check-input" id="cat{{ forloop.counter }}" type="radio" name="category" value="{{ category.slug }}" {% if category_slug == category.slug %}checked{% endif %}>
+                        <label class="form-check-label" for="cat{{ forloop.counter }}">{{ category.name }}</label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <!-- Price -->
+                <div class="widget mb-4">
+                  <h6 class="widget-title mb-2">Price</h6>
+                  <div class="widget-desc">
+                    <div class="d-flex align-items-center">
+                      <input class="form-control me-2" type="number" step="0.01" min="0" name="min" value="{{ min_price }}" placeholder="Min">
+                      <span class="me-2">&ndash;</span>
+                      <input class="form-control" type="number" step="0.01" min="0" name="max" value="{{ max_price }}" placeholder="Max">
+                    </div>
+                  </div>
+                </div>
+
+                <button class="btn btn-warning w-100" type="submit">Apply Filters</button>
+                <a class="btn btn-link w-100 mt-2" href="{% url 'shop' %}">Reset all</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content-wrapper py-3">
+      <div class="container">
+
+        <!-- Toolbar: result count, sort, grid/list toggle -->
+        <div class="row g-2 align-items-center mb-3">
+          <div class="col-5">
+            <p class="mb-0 small text-muted">
+              {{ products|length }} product{{ products|length|pluralize }}
+            </p>
+          </div>
+          <div class="col-7">
+            <div class="d-flex align-items-center justify-content-end">
+              <!-- Sort -->
+              <form action="{% url 'shop' %}" method="get" class="me-2">
+                {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+                {% if category_slug %}<input type="hidden" name="category" value="{{ category_slug }}">{% endif %}
+                <input type="hidden" name="view" value="{{ view_mode }}">
+                {% if min_price %}<input type="hidden" name="min" value="{{ min_price }}">{% endif %}
+                {% if max_price %}<input type="hidden" name="max" value="{{ max_price }}">{% endif %}
+                <select class="form-select form-select-sm" name="sort" onchange="this.form.submit()" aria-label="Sort products">
+                  <option value="">Sort by</option>
+                  {% for key, option in sort_options.items %}
+                    <option value="{{ key }}" {% if sort == key %}selected{% endif %}>{{ option.1 }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+
+              <!-- Grid / list toggle -->
+              <div class="btn-group btn-group-sm" role="group" aria-label="View mode">
+                <a class="btn {% if view_mode == 'grid' %}btn-primary{% else %}btn-outline-secondary{% endif %}" href="{{ grid_url }}" title="Grid view"><i class="fa-solid fa-table-cells"></i></a>
+                <a class="btn {% if view_mode == 'list' %}btn-primary{% else %}btn-outline-secondary{% endif %}" href="{{ list_url }}" title="List view"><i class="fa-solid fa-list"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% if has_filters %}
+          <p class="small">
+            <a href="{{ clear_url }}"><i class="fa-solid fa-xmark me-1"></i>Clear filters</a>
+          </p>
+        {% endif %}
+
+        {% if products %}
+          {% if view_mode == 'list' %}
+            <!-- LIST VIEW (Suha shop-list.html style) -->
+            <div class="row g-2">
+              {% for product in products %}
+                <div class="col-12">
+                  <div class="horizontal-product-card">
+                    <div class="d-flex align-items-center">
+                      <div class="product-thumbnail-side">
+                        <a class="product-thumbnail shadow-sm d-block" href="{{ product.get_absolute_url }}">
+                          <img src="{% if product.get_image_url %}{{ product.get_image_url }}{% else %}{% static 'img/product/placeholder.png' %}{% endif %}" alt="{{ product.title }}">
+                        </a>
+                      </div>
+                      <div class="product-description">
+                        <a class="wishlist-btn" href="#"><i class="fa-solid fa-heart"></i></a>
+                        <a class="product-title d-block" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                        <p class="sale-price"><i class="fa-solid fa-dollar-sign"></i>${{ product.price }}</p>
+                        <div class="product-rating"><i class="fa-solid fa-star"></i>5.0 <span class="ms-1">(1 review)</span></div>
+                        <button type="button" class="btn btn-success btn-sm mt-2" @click="addItem({{ product.id }})" title="Add to cart">
+                          <i class="fa-solid fa-plus me-1"></i>Add to cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <!-- GRID VIEW (Suha shop-grid.html style) -->
+            <div class="row g-2">
+              {% for product in products %}
+                <div class="col-6 col-md-4">
+                  <div class="card product-card">
+                    <div class="card-body">
+                      <span class="badge rounded-pill badge-warning">Sale</span>
+                      <a class="wishlist-btn" href="#"><i class="fa-solid fa-heart"></i></a>
+                      <a class="product-thumbnail d-block" href="{{ product.get_absolute_url }}">
+                        <img class="mb-2" src="{% if product.get_image_url %}{{ product.get_image_url }}{% else %}{% static 'img/product/placeholder.png' %}{% endif %}" alt="{{ product.title }}">
+                      </a>
+                      <a class="product-title" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                      <p class="sale-price">${{ product.price }}</p>
+                      <div class="product-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                      <button type="button" class="btn btn-success btn-sm" @click="addItem({{ product.id }})" title="Add to cart">
+                        <i class="fa-solid fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="card">
+            <div class="card-body text-center py-5">
+              <i class="fa-solid fa-box-open fa-2x mb-3 text-muted"></i>
+              <h6>No products found</h6>
+              <p class="mb-0 text-muted">
+                {% if has_filters %}Try <a href="{{ clear_url }}">clearing the filters</a>.{% else %}Nothing in the catalogue yet.{% endif %}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+{% endblock %}

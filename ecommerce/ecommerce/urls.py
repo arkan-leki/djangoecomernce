@@ -20,7 +20,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from ecommerce.views import service_worker
+
 urlpatterns = [
+    # Served from the root so the worker's scope covers the whole site
+    path('service-worker.js', service_worker, name='service-worker'),
     path('admin/', admin.site.urls),
     path('', include('store.urls')),
     path('cart/', include('cart.urls')),

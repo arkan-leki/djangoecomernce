@@ -1,0 +1,73 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ collection.name }}{% endblock %}
+
+{% block content %}
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'store' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">{{ collection.name }}</h6>
+        </div>
+        <!-- Filter Option-->
+        <div class="filter-option ms-2"></div>
+      </div>
+    </div>
+
+    <div class="page-content-wrapper py-3">
+      <div class="container">
+
+        <!-- Collection cover-->
+        <div class="card collection-card mb-3">
+          {% if collection.get_image_url %}
+            <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}">
+          {% endif %}
+          <div class="collection-title">
+            <span>{{ collection.name }}</span>
+            <span class="badge bg-danger">{{ collection.get_num_products }}</span>
+          </div>
+        </div>
+
+        {% if collection.description %}
+          <p class="text-muted">{{ collection.description }}</p>
+        {% endif %}
+
+        {% if products %}
+          <div class="row g-2">
+            {% for product in products %}
+              <div class="col-6 col-md-4">
+                <div class="card product-card">
+                  <div class="card-body">
+                    <span class="badge rounded-pill badge-warning">Sale</span>
+                    <a class="wishlist-btn" href="#"><i class="fa-solid fa-heart"></i></a>
+                    <a class="product-thumbnail d-block" href="{{ product.get_absolute_url }}">
+                      <img class="mb-2" src="{% if product.get_image_url %}{{ product.get_image_url }}{% else %}{% static 'img/product/placeholder.png' %}{% endif %}" alt="{{ product.title }}">
+                    </a>
+                    <a class="product-title" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                    <p class="sale-price">${{ product.price }}</p>
+                    <div class="product-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <button type="button" class="btn btn-success btn-sm" @click="addItem({{ product.id }})" title="Add to cart">
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="card">
+            <div class="card-body text-center py-5">
+              <i class="fa-solid fa-box-open fa-2x mb-3 text-muted"></i>
+              <h6>Nothing in this collection yet</h6>
+              <p class="mb-0"><a href="{% url 'shop' %}">Browse the shop</a></p>
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+{% endblock %}

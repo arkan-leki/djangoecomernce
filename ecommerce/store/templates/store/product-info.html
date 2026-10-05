@@ -1,149 +1,139 @@
-
-
-{% extends "store/base.html" %}
-
+{% extends 'store/base.html' %}
 {% load static %}
 
+{% block title %}{{ product.title }}{% endblock %}
+
 {% block content %}
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'store' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">Product Details</h6>
+        </div>
+        <!-- Navbar Toggler-->
+        <div class="navbar-toggler ms-2" id="navbarToggler"><i class="fa-solid fa-bars"></i></div>
+      </div>
+    </div>
 
-<div class="container">
+    <div class="page-content-wrapper">
+      <!-- Product Slides-->
+      <div class="product-slide-wrapper">
+        <div class="product-slides owl-carousel">
+          <!-- Single Hero Slide-->
+          <div class="single-product-slide" style="background-image: url('{% if product.get_image_url %}{{ product.get_image_url }}{% else %}{% static 'img/product/placeholder.png' %}{% endif %}')"></div>
+        </div>
+      </div>
 
-    <main class="pt-5">
-
-        <div class="row g-3">
-
-            <div class="col-md-5 col-lg-5 order-md-first bg-light">
-            
-                <img class="img-fluid mx-auto d-block" alt="Responsive image" src="{{product.image.url}}"> <!-- Product image -->
-            
+      <div class="product-description pb-3">
+        <!-- Product Title & Meta Data-->
+        <div class="product-title-meta-data bg-white mb-3 py-3">
+          <div class="container d-flex justify-content-between rtl-flex-d-row-r">
+            <div class="p-title-price">
+              <h5 class="mb-1">{{ product.title }}</h5>
+              <p class="sale-price mb-0 lh-1">${{ product.price }}</p>
             </div>
-
-            <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
-
-                <h1 class="mb-0 h4"> {{product.title | capfirst}}  </h1>
-
-                <strong> {{product.brand | capfirst}} </strong>
-
-
-                <hr>
-
-                <br>
-
-
-                <p> {{product.description}} </p>
-
-                <div class="border">
-
-                    <div class="col border-bottom">
-
-                        <div class="row p-3">
-
-                            <div class="col-6"> Price </div>
-
-                            <div class="col-6 text-end"><span class="h4 fw-bold">$ {{product.price}} </span></div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col">
-              
-                        <div class="row p-3">
-                            <div class="col-6">
-                                <label for="size-select">Size</label>
-                                <select id="size-select" class="custom-select px-2">
-                                    {% for s in product.size.size %}
-                                        <option value="{{ s }}">{{ s }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            
-                            <div class="col-6">
-                                <label for="color-select">Color</label>
-                                <select id="color-select" class="custom-select px-2">
-                                    {% for c in product.color.color %}
-                                        <option value="{{ c }}">{{ c }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            
-              
-                            <div class="col-6">
-              
-                               
-                                <label for="select">Qty</label>
-                                
-                                &nbsp; 
-                               
-                                <select id="select" class="custom-select px-2">
-              
-                                    <option value="1">1</option>
-              
-                                    <option value="2">2</option>
-              
-                                    <option value="3">3</option>
-              
-                                    <option value="4">4</option>
-              
-                                </select>
-
-                            </div>
-
-                            <div class="col-6 text-end">
-                                
-                                <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">
-                        
-                                Add to cart 
-                            
-                                </button> 
-                            
-
-                            </div>
-                        
-                        </div>
-
-                    </div>
-
-                </div>
-
+            <div class="p-wishlist-share"><a href="#"><i class="fa-solid fa-heart"></i></a></div>
+          </div>
+          <!-- Ratings-->
+          <div class="product-ratings">
+            <div class="container d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+              <div class="ratings"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span class="ps-1">5 ratings</span></div>
+              <div class="total-result-of-ratings"><span>5.0</span><span>Very Good</span></div>
             </div>
-
+          </div>
         </div>
 
-    </main>
+        <!-- Brand + Category -->
+        <div class="p-specification bg-white mb-3 py-3">
+          <div class="container">
+            <div class="d-flex justify-content-between">
+              <span class="text-muted">Brand</span><span>{{ product.brand }}</span>
+            </div>
+            {% if product.category %}
+              <div class="d-flex justify-content-between">
+                <span class="text-muted">Category</span>
+                <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
 
-    <br>
+        <!-- Selection Panel + Add To Cart share one x-data scope, because the
+             quantity/size/colour state is read by the form below. -->
+        <div x-data="{ qty: 1, size: '{% if product.size %}{{ product.size.0 }}{% endif %}', color: '{% if product.color %}{{ product.color.0 }}{% endif %}' }">
+        <div class="selection-panel bg-white mb-3 py-3">
+          <div class="container">
+            {% if product.color %}
+              <!-- Choose Color-->
+              <div class="choose-color-wrapper mb-3">
+                <p class="mb-1 font-weight-bold">Color</p>
+                <div class="choose-color-radio d-flex align-items-center">
+                  {% for c in product.color %}
+                    <div class="form-check mb-0 me-2">
+                      <input class="form-check-input" id="colorRadio{{ forloop.counter }}" type="radio" name="colorRadio" value="{{ c }}" x-model="color" {% if forloop.first %}checked{% endif %}>
+                      <label class="form-check-label" for="colorRadio{{ forloop.counter }}">{{ c }}</label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
 
-</div>
+            {% if product.size %}
+              <!-- Choose Size-->
+              <div class="choose-size-wrapper mb-0">
+                <p class="mb-1 font-weight-bold">Size</p>
+                <div class="choose-size-radio d-flex align-items-center">
+                  {% for s in product.size %}
+                    <div class="form-check mb-0 me-2">
+                      <input class="form-check-input" id="sizeRadio{{ forloop.counter }}" type="radio" name="sizeRadio" value="{{ s }}" x-model="size" {% if forloop.first %}checked{% endif %}>
+                      <label class="form-check-label" for="sizeRadio{{ forloop.counter }}">{{ s }}</label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
 
-<script>
-    $(document).on('click', '#add-button', function(e){
-        e.preventDefault();
+        <!-- Add To Cart-->
+        <div class="cart-form-wrapper bg-white mb-3 py-3">
+          <div class="container">
+            <div class="cart-form">
+              <div class="order-plus-minus d-flex align-items-center">
+                <div class="quantity-button-handler" @click="if (qty > 1) qty--">-</div>
+                <input class="form-control cart-quantity-input" type="text" step="1" name="quantity" x-model.number="qty">
+                <div class="quantity-button-handler" @click="qty++">+</div>
+              </div>
+              <button class="btn btn-danger ms-3" type="button" @click="addItem({{ product.id }}, qty, size, color)">Add To Cart</button>
+            </div>
+            <!-- Added confirmation -->
+            <div class="alert alert-success mt-3 mb-0" x-show="lastAdded" x-cloak>
+              Added to cart: <strong x-text="lastAdded"></strong>
+              &mdash; <a href="{% url 'cart-summary' %}">View basket</a>
+            </div>
+          </div>
+        </div>
+        </div><!-- /selection + add-to-cart scope -->
 
-        $.ajax({
-            type: 'POST',
-            url: '{% url "cart-add" %}',
-            data: {
-                product_id: $('#add-button').val(),
-                product_quantity: $('#select option:selected').text(),
-                size: $('#size-select option:selected').text(),
-                color: $('#color-select option:selected').text(),
-                csrfmiddlewaretoken: "{{csrf_token}}",
-                action: 'post'
-            },
-
-            success: function(json){
-                console.log(JSON.stringify(json));
-                document.getElementById('cart-qyt').textContent = json.cart_quantity;
-            },
-
-            error: function(xhr, status, error){
-
-            },
-
-        })
-
-    });
-</script>
-
+        <!-- Product Specification-->
+        <div class="p-specification bg-white mb-3 py-3">
+          <div class="container">
+            <h6>Specifications</h6>
+            {% if product.description %}
+              <p>{{ product.description|linebreaksbr }}</p>
+            {% else %}
+              <p class="text-muted mb-0">No description provided for this product.</p>
+            {% endif %}
+            <ul class="mb-0 ps-3">
+              <li><i class="fa-solid fa-check me-1"></i> 100% Good Reviews</li>
+              <li><i class="fa-solid fa-check me-1"></i> 7 Days Returns</li>
+              <li><i class="fa-solid fa-check me-1"></i> 100% Brand New Product</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}

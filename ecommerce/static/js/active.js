@@ -11,7 +11,7 @@
     });
 
     // :: Dropdown Menu
-    $(".sidenav-nav").find("li.suha-dropdown-menu").append("<div class='dropdown-trigger-btn'><i class='lni lni-chevron-down'></i></div>");
+    $(".sidenav-nav").find("li.suha-dropdown-menu").append("<div class='dropdown-trigger-btn'><i class='fa-solid fa-angle-down'></i></div>");
     $(".dropdown-trigger-btn").on('click', function () {
         $(this).siblings('ul').stop(true, true).slideToggle(700);
         $(this).toggleClass('active');
@@ -23,7 +23,7 @@
         welcomeSlider.owlCarousel({
             items: 1,
             loop: true,
-            autoplay: true,
+            autoplay: false,
             dots: true,
             center: true,
             margin: 0,
@@ -63,25 +63,16 @@
         var flashSlide = $('.flash-sale-slide');
         flashSlide.owlCarousel({
             items: 3,
-            margin: 16,
+            margin: 8,
             loop: true,
             autoplay: true,
             smartSpeed: 800,
             dots: false,
             nav: false,
             responsive: {
-                1400: {
-                    items: 5,
-                },
                 992: {
-                    items: 5,
-                },
-                768: {
-                    items: 4,
-                },
-                480: {
-                    items: 4,
-                },
+                    items: 4
+                }
             },
         })
     }
@@ -90,26 +81,17 @@
     if ($.fn.owlCarousel) {
         var collectionSlide = $('.collection-slide');
         collectionSlide.owlCarousel({
-            items: 2,
-            margin: 16,
+            items: 3,
+            margin: 8,
             loop: true,
             autoplay: true,
             smartSpeed: 800,
             dots: false,
             nav: false,
             responsive: {
-                1400: {
-                    items: 6,
-                },
                 992: {
-                    items: 5,
-                },
-                768: {
-                    items: 4,
-                },
-                480: {
-                    items: 3,
-                },
+                    items: 4
+                }
             },
         })
     }
@@ -125,7 +107,29 @@
             autoplayTimeout: 5000,
             dots: false,
             nav: true,
-            navText: [('<i class="lni lni-chevron-left"></i>'), ('<i class="lni lni-chevron-right"></i>')]
+            navText: [('<i class="fa-solid fa-angle-left"></i>'), ('<i class="fa-solid fa-angle-right"></i>')]
+        })
+    }
+
+    // :: Catagory Slides
+    if ($.fn.owlCarousel) {
+        var catagoryslides = $('.catagory-slides');
+        catagoryslides.owlCarousel({
+            items: 2.5,
+            margin: 4,
+            loop: true,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            dots: false,
+            nav: false,
+            responsive: {
+                992: {
+                    items: 4
+                },
+                768: {
+                    items: 3
+                }
+            },
         })
     }
 
@@ -134,25 +138,19 @@
         var relProductSlide = $('.related-product-slide');
         relProductSlide.owlCarousel({
             items: 2,
-            margin: 16,
+            margin: 8,
             loop: true,
             autoplay: true,
             smartSpeed: 800,
             dots: false,
             nav: false,
             responsive: {
-                1400: {
-                    items: 6,
-                },
-                992: {
-                    items: 5,
-                },
-                768: {
+                1200: {
                     items: 4,
                 },
-                480: {
+                768: {
                     items: 3,
-                },
+                }
             },
         })
     }
@@ -163,6 +161,11 @@
             delay: 150,
             time: 3000
         });
+    }
+
+    // :: Nice Select 
+    if ($.fn.niceSelect) {
+        $('#selectProductCatagory, #topicSelect, #countryCodeSelect').niceSelect();
     }
 
     // :: Prevent Default 'a' Click

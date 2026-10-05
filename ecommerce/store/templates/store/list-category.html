@@ -1,51 +1,81 @@
-{% extends "store/base.html" %}
-
+{% extends 'store/base.html' %}
 {% load static %}
 
+{% block title %}{{ category.name }} - Shop{% endblock %}
 
 {% block content %}
-
-
-<main>
-  
-  <div class="album py-5 bg-light">
-    <div class="container">
-
-      <div class="pb-3 h5"> {{category.name | capfirst}} </div>
-
-
-      <hr>
-
-      <br>
-
-
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
-
-        
-        {% for product in products %}
-
-        <div class="col">
-          <div class="card shadow-sm h-100">
-            <img class="card-img-top" alt="Responsive image" src="{{product.image.url}}">
-            <br>
-            <div class="card-body">
-              <p class="card-text">
-                <a class="text-info text-decoration-none" href="{{product.get_absolute_url}}"> {{product.title | capfirst}} </a>
-              </p>
-              <div class="d-flex justify-content-between align-items-center">
-                <h5> $ {{product.price}} </h5>
-              </div>
-            </div>
-          </div>
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'store' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">{{ category.name|capfirst }}</h6>
         </div>
-          
-        {% endfor %}
-          
+        <!-- Filter Option-->
+        <div class="filter-option ms-2"><i class="fa-solid fa-sliders"></i></div>
       </div>
     </div>
-  </div>
 
+    <div class="page-content-wrapper py-3">
+      <div class="container">
 
-</main>
+        <!-- Category Filter -->
+        {% if all_categories %}
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            {% for cat in all_categories %}
+              <a class="btn btn-sm {% if cat.slug == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %} rounded-pill" href="{{ cat.get_absolute_url }}">{{ cat.name }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
 
+        {% if products %}
+          <div class="row g-2">
+            {% for product in products %}
+              <!-- Product Card -->
+              <div class="col-6 col-md-4">
+                <div class="card product-card">
+                  <div class="card-body">
+                    <!-- Badge--><span class="badge rounded-pill badge-warning">On Sale</span>
+                    <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="fa-solid fa-heart"></i></a>
+                    <!-- Thumbnail --><a class="product-thumbnail d-block" href="{{ product.get_absolute_url }}">
+                      <img class="mb-2" src="{% if product.get_image_url %}{{ product.get_image_url }}{% else %}{% static 'img/product/placeholder.png' %}{% endif %}" alt="{{ product.title }}">
+                    </a>
+                    <!-- Product Title --><a class="product-title" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                    <!-- Product Price -->
+                    <p class="sale-price">${{ product.price }}</p>
+                    <!-- Rating -->
+                    <div class="product-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <!-- Add to Cart -->
+                    <button type="button" class="btn btn-success btn-sm" @click="addItem({{ product.id }})" title="Add to cart">
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="card">
+            <div class="card-body text-center py-5">
+              <i class="fa-solid fa-box-open fa-2x mb-3 text-muted"></i>
+              <h6>No products in {{ category.name|capfirst }}</h6>
+              <p class="mb-0 text-muted"><a href="{% url 'store' %}">Back to all products</a></p>
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+
+      <!-- Added-to-cart toast -->
+      <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 1090;">
+        <div class="toast align-items-center text-bg-success border-0" :class="{'show': lastAdded}" x-cloak>
+          <div class="d-flex">
+            <div class="toast-body">Added to cart: <strong x-text="lastAdded"></strong></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" @click="lastAdded = null"></button>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}

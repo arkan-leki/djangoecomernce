@@ -1,22 +1,29 @@
-{% include 'store/base.html' %}
+{% extends 'store/base.html' %}
 {% load static %}
 
+{% block title %}Payment Successful - Suha Store{% endblock %}
+{% block meta_description %}Your Suha Store order was placed successfully.{% endblock %}
 
 {% block content %}
-
-<body class="w-full" style="background-color: grey;">
-    <br>
-    <div class="container shadow-md p-5 bg-light w-50  rounded">
-        <div class="row text-center items-center">
-            <i class="col fa fa-credit-card fa-4x text-success"></i>
-            <br>
-            <div class="text-center">
-                <h1><strong>Payment success!</strong></h1>
-            </div>
-            <hr>
-            <h4>Your order was processed successfully </h4>
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'store' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">Payment Status</h6>
         </div>
+      </div>
     </div>
-</body>
 
-{% endblock content %}
+    <!-- Order/Payment Success-->
+    <div class="order-success-wrapper">
+      <div class="content"><i class="fa-solid fa-basket-shopping"></i>
+        <h5 class="text-white">Payment successful</h5>
+        <p class="text-white opacity-75">We will notify you of all the details via email. Thank you!</p>
+        <a class="btn btn-warning mt-3" href="{% url 'store' %}">Shopping Again</a>
+        <a class="btn btn-outline-light mt-2" href="{% url 'dashboard' %}">View My Orders</a>
+      </div>
+    </div>
+{% endblock %}

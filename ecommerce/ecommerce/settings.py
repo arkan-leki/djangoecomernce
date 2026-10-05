@@ -166,12 +166,19 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Use SMTP email backend
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-# SMTP email settings
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "arkan.leki@gmail.com"
-EMAIL_HOST_PASSWORD = "yuacvabggtidtgnz"
+# SMTP email settings.
+# Credentials come from the environment (.env) and are NEVER hardcoded: this
+# repository is public, and a committed app password is a live credential.
+# Set EMAIL_HOST_USER / EMAIL_HOST_PASSWORD in .env (see .env.example).
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+# In development, print emails (e.g. the account-activation link) to the console
+# instead of sending them through the real account.
+if DEBUG and env.bool("EMAIL_CONSOLE_IN_DEBUG", default=False):
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
 # paypal popup

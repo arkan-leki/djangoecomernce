@@ -1,44 +1,111 @@
-{% include 'store/base.html' %}
-
+{% extends 'store/base.html' %}
 {% load static %}
-{% load crispy_forms_tags  %}
+
+{% block title %}Edit Profile{% endblock %}
 
 {% block content %}
-<body class="w-full w-100" style="background-color: gray;">
-    <br>
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'dashboard' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">Edit Profile</h6>
+        </div>
+        <!-- Navbar Toggler (layout spacer, keeps the title centred) -->
+        <div class="suha-navbar-toggler ms-2 invisible"><div><span></span><span></span><span></span></div></div>
+      </div>
+    </div>
 
-    <div class="container bg-white shadow-md p-5" style="width:50%; border-radius:20px;">
-        <h3>
-            Profile Management
-        </h3>
-        <br>
-        <br>
-        <form action="" method="post" enctype="multipart/form-data">
+    <div class="page-content-wrapper">
+      <div class="container">
+        <div class="profile-wrapper-area py-3">
 
+          <form action="{% url 'profile' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{user_form|crispy}}
-            <img src="{{user_form.instance.get_avatar}}" alt="Image URL" height="100" width="100">
-            <br>
-            <br>
 
-            <button type="submit" class="btn btn-primary btn-lg w-100 btnk-block p-2 ">
-                <i class="fa fa-user-plus"  aria-hidden="true"></i> &nbsp;Update Your Profile </button>
+            <!-- User Information-->
+            <div class="card user-info-card">
+              <div class="card-body p-4 d-flex align-items-center">
+                <div class="user-profile me-3">
+                  {% if user.get_avatar %}
+                    <img src="{{ user.get_avatar }}" alt="{{ user.phone }}">
+                  {% else %}
+                    <img src="{% static 'img/bg-img/9.jpg' %}" alt="">
+                  {% endif %}
+                  <div class="change-user-thumb">
+                    <label for="id_profile_image" class="mb-0" style="cursor:pointer;" title="Change profile image">
+                      <i class="fa-solid fa-pen"></i>
+                    </label>
+                  </div>
+                </div>
+                <div class="user-info">
+                  <p class="mb-0 text-dark">@{{ user.phone }}</p>
+                  <h5 class="mb-0">{% firstof user.first_name user.phone %}{% if user.last_name %} {{ user.last_name }}{% endif %}</h5>
+                </div>
+              </div>
+            </div>
 
-        </form>
+            <!-- User Meta Data (Suha edit-profile form pattern) -->
+            <div class="card user-data-card">
+              <div class="card-body">
+
+                {% if user_form.non_field_errors %}
+                  <div class="alert alert-danger">{% for e in user_form.non_field_errors %}<div>{{ e }}</div>{% endfor %}</div>
+                {% endif %}
+
+                <div class="mb-3">
+                  <div class="title mb-2"><i class="fa-solid fa-user"></i><span>First Name</span></div>
+                  <input class="form-control" type="text" name="first_name" placeholder="First name"
+                         value="{{ user_form.first_name.value|default:'' }}">
+                  {% if user_form.first_name.errors %}<div class="text-danger small mt-1">{{ user_form.first_name.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                  <div class="title mb-2"><i class="fa-solid fa-user"></i><span>Last Name</span></div>
+                  <input class="form-control" type="text" name="last_name" placeholder="Last name"
+                         value="{{ user_form.last_name.value|default:'' }}">
+                  {% if user_form.last_name.errors %}<div class="text-danger small mt-1">{{ user_form.last_name.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                  <div class="title mb-2"><i class="fa-solid fa-phone"></i><span>Phone</span></div>
+                  <input class="form-control" type="tel" name="phone" placeholder="07XX XXX XXXX"
+                         value="{{ user_form.phone.value|default:'' }}" required>
+                  {% if user_form.phone.errors %}<div class="text-danger small mt-1">{{ user_form.phone.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                  <div class="title mb-2"><i class="fa-solid fa-envelope"></i><span>Email Address</span></div>
+                  <input class="form-control" type="email" name="email" placeholder="you@example.com"
+                         value="{{ user_form.email.value|default:'' }}" required>
+                  {% if user_form.email.errors %}<div class="text-danger small mt-1">{{ user_form.email.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                  <div class="title mb-2"><i class="fa-solid fa-image"></i><span>Profile Image</span></div>
+                  <input class="form-control" id="id_profile_image" type="file" name="profile_image" accept="image/*">
+                  {% if user_form.profile_image.errors %}<div class="text-danger small mt-1">{{ user_form.profile_image.errors.0 }}</div>{% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-2">
+                  <i class="fa-solid fa-floppy-disk me-2"></i>Save Changes
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Danger zone-->
+          <div class="card user-data-card mt-3">
+            <div class="card-body text-center">
+              <a href="{% url 'delete-account' %}" class="btn btn-link text-danger">
+                <i class="fa-solid fa-user-xmark me-2"></i>Delete My Account
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
-
-    <br>
-    <div class="container bg-white shadow-md p-5" style="width:500px; border-radius:20px;">
-        <h3>
-            Delete Your Profile
-        </h3>
-        <br>
-        <br>
-        
-         <a href="{% url 'delete-account' %}" class="btn btn-danger btn-lg w-100 btnk-block p-2 ">
-            <i class="fa fa-user-times"  aria-hidden="true"></i> &nbsp; Process To delete Account  </a>
-
-    </div>
-</body>
-
-{% endblock content %}
+{% endblock %}

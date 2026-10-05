@@ -1,62 +1,91 @@
 {% extends 'store/base.html' %}
 {% load static %}
 
+{% block title %}My Account{% endblock %}
 
 {% block content %}
-<!-- Introduction section -->
-
-<!-- Dashboard Content -->
-<section class="container mt-4">
-    <div class="row">
-        <div class="col-md-6">
-            <h2>Welcome, {{ user.username }}</h2>
-            <p>Manage your e-commerce store with ease!</p>
+    <!-- Header Area-->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+        <!-- Back Button-->
+        <div class="back-button me-2"><a href="{% url 'store' %}"><i class="fa-solid fa-arrow-left-long"></i></a></div>
+        <!-- Page Title-->
+        <div class="page-heading">
+          <h6 class="mb-0">My Account</h6>
         </div>
+        <!-- Navbar Toggler (layout spacer, keeps the title centred) -->
+        <div class="suha-navbar-toggler ms-2 invisible"><div><span></span><span></span><span></span></div></div>
+      </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Edit Profile</h5>
-                    <p class="card-text">Update your personal information and preferences.</p>
-                    <a href="{% url 'profile' %}" class="btn btn-primary">Edit Profile</a>
-                </div>
-            </div>
-        </div>
+    <div class="page-content-wrapper">
+      <div class="container">
+        <div class="profile-wrapper-area py-3">
 
-
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Manage Shipping</h5>
-                    <p class="card-text">View and manage your shipping address.</p>
-                    <a href="{% url 'manage-shipping' %}" class="btn btn-primary">View Address</a>
-                </div>
+          <!-- User Information-->
+          <div class="card user-info-card">
+            <div class="card-body p-4 d-flex align-items-center">
+              <div class="user-profile me-3">
+                {% if user.get_avatar %}
+                  <img src="{{ user.get_avatar }}" alt="{{ user.phone }}">
+                {% else %}
+                  <img src="{% static 'img/bg-img/9.jpg' %}" alt="">
+                {% endif %}
+              </div>
+              <div class="user-info">
+                <p class="mb-0 text-dark">{{ user.email|default:user.phone }}</p>
+                <h5 class="mb-0">{% firstof user.first_name user.phone "My Account" %}{% if user.last_name %} {{ user.last_name }}{% endif %}</h5>
+              </div>
             </div>
+          </div>
+
+          <!-- Account Meta Data-->
+          <div class="card user-data-card">
+            <div class="card-body">
+              <div class="single-profile-data d-flex align-items-center justify-content-between">
+                <div class="title d-flex align-items-center"><i class="fa-solid fa-phone"></i><span>Phone</span></div>
+                <div class="data-content">{{ user.phone }}</div>
+              </div>
+              <div class="single-profile-data d-flex align-items-center justify-content-between">
+                <div class="title d-flex align-items-center"><i class="fa-solid fa-envelope"></i><span>Email</span></div>
+                <div class="data-content">{{ user.email|default:"&mdash;" }}</div>
+              </div>
+              <div class="single-profile-data d-flex align-items-center justify-content-between">
+                <div class="title d-flex align-items-center"><i class="fa-solid fa-location-dot"></i><span>Shipping Address</span></div>
+                <div class="data-content">
+                  {% if shipping_address %}{{ shipping_address.city|default:"Saved" }}{% else %}<span class="text-muted">Not set</span>{% endif %}
+                </div>
+              </div>
+              <div class="single-profile-data d-flex align-items-center justify-content-between">
+                <div class="title d-flex align-items-center"><i class="fa-solid fa-star"></i><span>My Orders</span></div>
+                <div class="data-content">
+                  {% if orders_count %}
+                    <a class="btn btn-success btn-sm" href="{% url 'manage-orders' %}">{{ orders_count }} order{{ orders_count|pluralize }} &mdash; View</a>
+                  {% else %}
+                    <span class="text-muted">No orders yet</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Account actions-->
+              <div class="edit-profile-btn mt-3">
+                <a class="btn btn-primary w-100" href="{% url 'profile' %}"><i class="fa-solid fa-pen me-2"></i>Edit Profile</a>
+              </div>
+              <div class="mt-2">
+                <a class="btn btn-outline-secondary w-100" href="{% url 'manage-shipping' %}"><i class="fa-solid fa-truck-fast me-2"></i>Manage Shipping</a>
+              </div>
+              <div class="mt-2">
+                <a class="btn btn-outline-secondary w-100" href="{% url 'manage-orders' %}"><i class="fa-solid fa-box me-2"></i>My Orders</a>
+              </div>
+              <div class="mt-2">
+                <a class="btn btn-warning w-100" href="{% url 'user-logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Log Out</a>
+              </div>
+              <div class="mt-2">
+                <a class="btn btn-link w-100 text-danger" href="{% url 'delete-account' %}"><i class="fa-solid fa-user-xmark me-2"></i>Delete Account</a>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Orders</h5>
-                    <p class="card-text">View and manage your orders.</p>
-                    <a href="{% url 'manage-orders' %}" class="btn btn-primary">View Orders</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Logout</h5>
-                    <p class="card-text">Click below to logout from your account.</p>
-                    <a href="{% url 'user-logout' %}" class="btn btn-danger">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-{% endblock content %}
+{% endblock %}

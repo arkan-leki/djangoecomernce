@@ -1,7 +1,8 @@
 {
-  "name": "Suha",
+  "name": "Suha Store",
   "short_name": "Suha",
-  "start_url": "https://designing-world.com/suha-v2.6.0/intro.html",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#100DD1",
   "theme_color": "#100DD1",

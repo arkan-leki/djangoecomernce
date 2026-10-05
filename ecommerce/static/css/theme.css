@@ -1,0 +1,255 @@
+/* ==========================================================================
+   Theme override — loaded AFTER Suha's style.css
+   --------------------------------------------------------------------------
+   Suha v3.0.1 hardcodes its red accent #ea4c62 in 34 places inside style.css
+   (nav bar, .btn-danger, badges, wishlist hearts, sale prices, rating chips,
+   the flash-sale gradient, checked radios, settings toggles, ...).
+
+   This file recolours that accent WITHOUT touching the vendor stylesheet, so
+   the change is contained and fully reversible: delete this file (or its
+   <link> in store/base.html) and Suha's red comes back.
+
+   To rebrand, change --brand (and --brand-contrast for legibility).
+     blue  (current) : --brand: #100DD1;  --brand-contrast: #ffffff;
+     white/light nav : --brand: #ffffff;  --brand-contrast: #100DD1;
+                       then also uncomment the border rule at the bottom.
+   ========================================================================== */
+
+:root {
+  --brand: #100dd1;          /* Suha's own .btn-primary blue */
+  --brand-contrast: #ffffff; /* text/icons drawn on top of --brand */
+  --brand-dark: #0b0999;     /* gradient end */
+}
+
+/* ==========================================================================
+   Collection cards: uniform square cover, readable title over the image.
+   ========================================================================== */
+.collection-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+.collection-card > a {
+  display: block;
+  position: relative;
+}
+.collection-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+.collection-card .collection-title {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  margin: 0;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: linear-gradient(to top, rgba(8, 6, 60, 0.82), rgba(8, 6, 60, 0));
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.collection-card .collection-title .badge {
+  background-color: var(--brand-contrast) !important;
+  color: var(--brand) !important;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Frosted glass: header bar, bottom nav and the side drawer.
+   backdrop-filter blurs whatever scrolls underneath; the background stays
+   translucent so the blur is visible. `@supports` keeps a solid fallback for
+   browsers without backdrop-filter (Firefox < 103, older Safari).
+   ========================================================================== */
+:root {
+  --glass-blur: 16px;
+  --glass-sat: 180%;
+}
+
+.header-area {
+  background-color: rgba(255, 255, 255, 0.62) !important;
+  border-bottom: 1px solid rgba(15, 15, 15, 0.06);
+}
+.footer-nav-area {
+  background-color: rgba(16, 13, 209, 0.62) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+.suha-offcanvas-wrap {
+  background-color: rgba(16, 13, 209, 0.72) !important;
+}
+.suha-filter-offcanvas-wrap {
+  background-color: rgba(255, 255, 255, 0.78) !important;
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header-area,
+  .footer-nav-area,
+  .suha-offcanvas-wrap,
+  .suha-filter-offcanvas-wrap {
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  }
+}
+
+/* ==========================================================================
+   Flat sections: remove the coloured/dark section panels so the page body
+   shows through. Individual cards keep their own white background.
+   ========================================================================== */
+.dark-mode-wrapper,
+.cta-area,
+.flash-sale-wrapper,
+.top-products-area,
+.product-catagories-wrapper,
+.page-content-wrapper {
+  background: transparent !important;
+}
+
+/* ==========================================================================
+   Product card trim: the wishlist "Sale" ribbons and the coupon panel were
+   demo furniture; keep the cards clean.
+   ========================================================================== */
+.coupon-card {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------- nav bar */
+.footer-nav-area {
+  background-color: var(--brand);
+}
+.footer-nav-area .suha-footer-nav a,
+.footer-nav-area .suha-footer-nav li a {
+  color: var(--brand-contrast);
+}
+.footer-nav-area .suha-footer-nav a i {
+  color: var(--brand-contrast);
+}
+.footer-nav-area .badge {
+  background-color: var(--brand-contrast) !important;
+  color: var(--brand) !important;
+}
+
+/* -------------------------------------------------------- buttons / badges */
+.btn-danger {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-contrast);
+}
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  background-color: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: var(--brand-contrast);
+}
+.bg-danger,
+.badge-danger {
+  background-color: var(--brand) !important;
+}
+
+/* ------------------------------------------------------- back / close btns */
+.go-back-btn {
+  background-color: var(--brand);
+}
+.layout-options a.active,
+.layout-options a:hover,
+.layout-options a:focus {
+  background-color: var(--brand);
+}
+.mfp-image-holder .mfp-close,
+.mfp-iframe-holder .mfp-close {
+  background-color: var(--brand);
+}
+
+/* --------------------------------------------------------------- products */
+.product-card .wishlist-btn,
+.horizontal-product-card .product-description .wishlist-btn,
+.p-wishlist-share a,
+.product-slide-wrapper .video-btn,
+.product-title-meta-data .post-catagory,
+.product-catagories a:hover,
+.product-catagories a:focus {
+  color: var(--brand);
+}
+.product-description .sale-price,
+.horizontal-product-card .product-description .sale-price span {
+  color: var(--brand);
+}
+.product-description .total-result-of-ratings span:first-child {
+  background-color: var(--brand);
+}
+.choose-size-radio .form-check-input:checked {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+.horizontal-product-card .product-description .badge-warning {
+  color: var(--brand-contrast);
+}
+
+/* ---------------------------------------------------------------- checkout */
+.billing-information-title-card {
+  border-color: var(--brand);
+}
+
+/* ------------------------------------------------------------------ order */
+.single-order-status.active .order-icon {
+  background-color: var(--brand);
+}
+
+/* --------------------------------------------------------------- settings */
+.single-settings .title i,
+.single-settings .knobs:before {
+  background-color: var(--brand);
+}
+.otp-form .nice-select .list .option:hover,
+.otp-form .nice-select .list .option.selected {
+  background-color: var(--brand);
+}
+
+/* -------------------------------------------------------------- cta panel */
+.cta-text {
+  background: #100dd1;
+  background: -webkit-gradient(linear, left top, right top, from(var(--brand-dark)), to(var(--brand)));
+  background: linear-gradient(to right, var(--brand-dark), var(--brand));
+}
+
+/* ------------------------------------------------------------- blog cards */
+.blog-card .post-bookmark:hover,
+.blog-card .post-bookmark:focus,
+.blog-card .post-content .post-catagory,
+.blog-details-post-thumbnail .post-bookmark {
+  color: var(--brand);
+}
+.blog-details-post-thumbnail .post-bookmark:hover,
+.blog-details-post-thumbnail .post-bookmark:focus {
+  background-color: var(--brand);
+}
+.accordian-card.seller-card .accordian-header button span i {
+  background-color: var(--brand);
+}
+
+/* ------------------------------------------------------- dark theme parity */
+[theme-color="dark"] .horizontal-product-card .product-description .wishlist-btn,
+[theme-color="dark"] .p-wishlist-share a,
+[theme-color="dark"] .product-slide-wrapper .video-btn {
+  color: var(--brand);
+}
+[theme-color="dark"] .layout-options a.active,
+[theme-color="dark"] .layout-options a:hover,
+[theme-color="dark"] .layout-options a:focus,
+[theme-color="dark"] .blog-details-post-thumbnail .post-bookmark:hover,
+[theme-color="dark"] .blog-details-post-thumbnail .post-bookmark:focus {
+  background-color: var(--brand);
+}
+
+/* Deliberately NOT recoloured: .cart-table a.remove-product stays red, because
+   removing an item is a destructive action and should read as a warning. */
+
+/* For the white/light nav variant, uncomment:
+.footer-nav-area { border-top: 1px solid #e6e6e6; box-shadow: 0 -2px 8px rgba(15,15,15,.08); }
+*/

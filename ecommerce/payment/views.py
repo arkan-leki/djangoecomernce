@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from cart.cart import Cart
@@ -30,10 +31,12 @@ def checkout(request):
     return render(request, "payment/checkout.html")
 
 
+@transaction.atomic
 def complete_order(request):
     if request.POST.get("action") == "complete_order":
         name = request.POST.get("name", "")
         email = request.POST.get("email", "")
+        phone = request.POST.get("phone", "").strip()
         address1 = request.POST.get("address1", "")
         address2 = request.POST.get("address2", "")
         city = request.POST.get("city", "")
@@ -45,17 +48,26 @@ def complete_order(request):
         )
 
         cart = Cart(request)
-        total_cost = cart.get_total()
+        # Cart.__iter__ prunes items whose product no longer exists, so build the
+        # item list first: everything below is derived from what really is in the
+        # basket, and an empty basket never produces a $0 order.
+        cart_items = list(cart)
+        if not cart_items:
+            return JsonResponse(
+                {"success": False, "error": "Your basket is empty."}, status=400
+            )
+        total_cost = sum(item["total"] for item in cart_items)
 
         if request.user.is_authenticated:
             order = Order.objects.create(
                 user=request.user,
                 full_name=name,
                 email=email,
+                phone=phone or None,
                 shipping_address=ShippingAddress,
                 amount_paid=total_cost,
             )
-            for item in cart:
+            for item in cart_items:
                 order.orderitem_set.create(
                     product=item["product"],
                     quantity=item["qyt"],
@@ -66,16 +78,19 @@ def complete_order(request):
             order = Order.objects.create(
                 full_name=name,
                 email=email,
+                phone=phone or None,
                 shipping_address=ShippingAddress,
                 amount_paid=total_cost,
             )
-            for item in cart:
+            for item in cart_items:
                 order.orderitem_set.create(
                     product=item["product"],
                     quantity=item["qyt"],
                     price=item["price"],
                 )
         order_success = True
-        response = JsonResponse({"success": order_success})
-        return HttpResponse(response)
-    return HttpResponse("App_Name:Name")
+        return JsonResponse({"success": order_success, "order_id": order.id})
+    return JsonResponse(
+        {"success": False, "error": "This endpoint expects action=complete_order."},
+        status=400,
+    )

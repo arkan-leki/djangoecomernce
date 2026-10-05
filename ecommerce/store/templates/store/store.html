@@ -1,83 +1,270 @@
 {% extends 'store/base.html' %}
 {% load static %}
 
+{% block title %}Suha Store{% endblock %}
 
 {% block content %}
-<!-- Introduction section -->
-
-<section class="py-4 text-center container">
-
-    <div class="row py-lg-5">
-
-        <div class="col-lg-6 col-md-8 mx-auto">
-
-
-            <h4> Edenthought...Simplicity at it's finest. </h4>
-
-
-            <br>
-
-
-            <p class="lead text-muted">
-
-                Browse our extensive collection.
-
-            </p>
-
-
-            <br>
-
-            <a href="{% url 'register' %}" class="btn btn-primary my-2">
-                <i class="fa fa-user-plus" aria-hidden="true"></i> &nbsp;  Create an account </a>
-
-
+    {% if search_query %}
+      <div class="container pt-2">
+        <p class="mb-0 text-muted">Showing results for <strong>{{ search_query }}</strong>
+          &mdash; <a href="{% url 'store' %}">clear</a></p>
+      </div>
+    {% endif %}
+<!-- Header Area -->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between d-flex rtl-flex-d-row-r">
+        <!-- Logo Wrapper -->
+        <div class="logo-wrapper"><a href="{% url 'store' %}"><img src="{% static 'img/core-img/logo-small.png' %}" alt=""></a></div>
+        <div class="navbar-logo-container d-flex align-items-center">
+          <!-- Cart Icon -->
+          <div class="cart-icon-wrap"><a href="{% url 'cart-summary' %}"><i class="fa-solid fa-bag-shopping"></i><span x-text="count" x-cloak>0</span></a></div>
+          <!-- User Profile Icon -->
+          <div class="user-profile-icon ms-2">
+            <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'user-login' %}{% endif %}"
+               title="{% if user.is_authenticated %}{% firstof user.first_name user.phone %}{% else %}Log in{% endif %}">
+              {% if user.get_avatar %}
+                <img src="{{ user.get_avatar }}" alt="{{ user.phone }}">
+              {% else %}
+                <img src="{% static 'img/bg-img/9.jpg' %}" alt="">
+              {% endif %}
+            </a>
+          </div>
+          <!-- Navbar Toggler -->
+          <div class="suha-navbar-toggler ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaOffcanvas" aria-controls="suhaOffcanvas">
+            <div><span></span><span></span><span></span></div>
+          </div>
         </div>
-
+      </div>
     </div>
-
-
-</section>
-
-
-<!-- All products section -->
-<section class="album py-5 bg-light">
-
-    <div class="container">
-
-        <div class="pb-3 h5"> All products </div>
-
-
-        <hr>
-
-        <br>
-
-
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
-
-
-
-
-            {% for product in all_products %}
-            <div class="col">
-                <div class="card shadow-sm h-100">
-                    <img class="card-img-top" alt="Responsive image" src="{{ product.image.url }}">
-                    <div class="card-body">
-                        <p class="card-text">
-                            <a class="text-info text-decoration-none" href="{{product.get_absolute_url}}">{{ product.title | capfirst }}</a>
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5> {{ product.price }} </h5>
-                        </div>
-                    </div>
+    <div class="offcanvas offcanvas-start suha-offcanvas-wrap" tabindex="-1" id="suhaOffcanvas" aria-labelledby="suhaOffcanvasLabel">
+      <!-- Close button-->
+      <button class="btn-close btn-close-white" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <!-- Offcanvas body-->
+      <div class="offcanvas-body">
+        <!-- Sidenav Profile-->
+        <div class="sidenav-profile">
+          {% if user.is_authenticated %}
+            <div class="user-profile">
+              {% if user.get_avatar %}
+                <img src="{{ user.get_avatar }}" alt="{{ user.phone }}">
+              {% else %}
+                <img src="{% static 'img/bg-img/9.jpg' %}" alt="">
+              {% endif %}
+            </div>
+            <div class="user-info">
+              <h5 class="user-name mb-1 text-white">{% firstof user.first_name user.phone %}{% if user.last_name %} {{ user.last_name }}{% endif %}</h5>
+              <p class="available-balance text-white">{{ user.email|default:user.phone }}</p>
+            </div>
+          {% else %}
+            <div class="user-profile"><img src="{% static 'img/bg-img/9.jpg' %}" alt=""></div>
+            <div class="user-info">
+              <h5 class="user-name mb-1 text-white">Welcome</h5>
+              <p class="available-balance text-white"><a class="text-white" href="{% url 'user-login' %}">Sign in</a> to your account</p>
+            </div>
+          {% endif %}
+        </div>
+        <!-- Sidenav Nav-->
+        <ul class="sidenav-nav ps-0">
+          <li><a href="{% url 'profile' %}"><i class="fa-solid fa-user"></i>My Profile</a></li>
+          <li><a href="#"><i class="fa-solid fa-bell lni-tada-effect"></i>Notifications<span class="ms-1 badge badge-warning">3</span></a></li>
+          <li class="suha-dropdown-menu"><a href="#"><i class="fa-solid fa-store"></i>Shop Pages</a>
+            <ul>
+              <li><a href="{% url 'shop' %}">Shop Grid</a></li>
+              <li><a href="{% url 'shop' %}?view=list">Shop List</a></li>
+              <li><a href="#">Product Details</a></li>
+              <li><a href="{% url 'store' %}">Featured Products</a></li>
+              <li><a href="{% url 'store' %}">Flash Sale</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fa-solid fa-file-code"></i>All Pages</a></li>
+          <li class="suha-dropdown-menu"><a href="#"><i class="fa-solid fa-heart"></i>My Wishlist</a>
+            <ul>
+              <li><a href="#">Wishlist Grid</a></li>
+              <li><a href="#">Wishlist List</a></li>
+            </ul>
+          </li>
+          <li><a href="{% url 'dashboard' %}"><i class="fa-solid fa-sliders"></i>Settings</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'user-logout' %}"><i class="fa-solid fa-toggle-off"></i>Sign Out</a></li>
+          {% else %}
+            <li><a href="{% url 'user-login' %}"><i class="fa-solid fa-right-to-bracket"></i>Sign In</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    <!-- PWA Install Alert -->
+    <div class="toast pwa-install-alert shadow bg-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000" data-bs-autohide="true">
+      <div class="toast-body">
+        <div class="content d-flex align-items-center mb-2"><img src="{% static 'img/icons/icon-72x72.png' %}" alt="">
+          <h6 class="mb-0">Add to Home Screen</h6>
+          <button class="btn-close ms-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div><span class="mb-0 d-block">Add Suha on your mobile home screen. Click the<strong class="mx-1">Add to Home Screen</strong>button &amp; enjoy it like a regular app.</span>
+      </div>
+    </div>
+    <div class="page-content-wrapper">
+      <!-- Search Form-->
+      <!-- Search Form-->
+      <div class="container">
+        <div class="search-form pt-3 rtl-flex-d-row-r">
+          <form action="{% url 'store' %}" method="get">
+            <input class="form-control" type="search" name="q" value="{{ search_query|default:'' }}" placeholder="Search products">
+            <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </form>
+          <!-- Alternative Search Options -->
+          <div class="alternative-search-options">
+            <div class="dropdown"><a class="btn btn-danger dropdown-toggle" id="altSearchOption" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-sliders"></i></a>
+              <!-- Dropdown Menu -->
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="altSearchOption">
+                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-microphone"> </i>Voice Search</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-image"> </i>Image Search</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Hero Wrapper -->
+      <div class="hero-wrapper">
+        <div class="container">
+          <div class="pt-3">
+            <!-- Hero Slides-->
+            <div class="hero-slides owl-carousel">
+              <!-- Single Hero Slide-->
+              <div class="single-hero-slide" style="background-image: url('{% static 'img/bg-img/1.jpg' %}')">
+                <div class="slide-content h-100 d-flex align-items-center">
+                  <div class="slide-text">
+                    <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms" data-duration="1000ms">Amazon Echo</h4>
+                    <p class="text-white" data-animation="fadeInUp" data-delay="400ms" data-duration="1000ms">3rd Generation, Charcoal</p><a class="btn btn-primary" href="{% url 'store' %}" data-animation="fadeInUp" data-delay="800ms" data-duration="1000ms">Buy Now</a>
+                  </div>
                 </div>
-
+              </div>
+              <!-- Single Hero Slide-->
+              <div class="single-hero-slide" style="background-image: url('{% static 'img/bg-img/2.jpg' %}')">
+                <div class="slide-content h-100 d-flex align-items-center">
+                  <div class="slide-text">
+                    <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms" data-duration="1000ms">Light Candle</h4>
+                    <p class="text-white" data-animation="fadeInUp" data-delay="400ms" data-duration="1000ms">Now only $22</p><a class="btn btn-success" href="{% url 'store' %}" data-animation="fadeInUp" data-delay="500ms" data-duration="1000ms">Buy Now</a>
+                  </div>
+                </div>
+              </div>
+              <!-- Single Hero Slide-->
+              <div class="single-hero-slide" style="background-image: url('{% static 'img/bg-img/3.jpg' %}')">
+                <div class="slide-content h-100 d-flex align-items-center">
+                  <div class="slide-text">
+                    <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms" data-duration="1000ms">Best Furniture</h4>
+                    <p class="text-white" data-animation="fadeInUp" data-delay="400ms" data-duration="1000ms">3 years warranty</p><a class="btn btn-danger" href="{% url 'store' %}" data-animation="fadeInUp" data-delay="800ms" data-duration="1000ms">Buy Now</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Product Catagories -->
+      <div class="product-catagories-wrapper py-3">
+        <div class="container">
+          <div class="row g-2 rtl-flex-d-row-r">
+            {% for category in all_categories %}
+            <!-- Catagory Card -->
+            <div class="col-3">
+              <div class="card catagory-card">
+                <div class="card-body px-2"><a href="{% url 'shop' %}?category={{ category.slug }}"><img src="{% if category.get_image_url %}{{ category.get_image_url }}{% else %}{% static 'img/core-img/woman-clothes.png' %}{% endif %}" alt="{{ category.name }}"><span>{{ category.name }}</span></a></div>
+              </div>
             </div>
             {% endfor %}
-
-
-
-
+          </div>
         </div>
+      </div>
+      <!-- Flash Sale Slide -->
+      <div class="flash-sale-wrapper">
+        <div class="container">
+          <div class="section-heading d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+            <h6 class="d-flex align-items-center rtl-flex-d-row-r"><i class="fa-solid fa-bolt-lightning me-1 text-danger lni-flashing-effect"></i>Cyclone Offer</h6>
+            <!-- Please use event time this format: YYYY/MM/DD hh:mm:ss -->
+            <ul class="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r" data-countdown="2022/12/31 14:21:59">
+              <li><span class="days">0</span>d</li>
+              <li><span class="hours">0</span>h</li>
+              <li><span class="minutes">0</span>m</li>
+              <li><span class="seconds">0</span>s</li>
+            </ul>
+          </div>
+          <!-- Flash Sale Slide-->
+          <div class="flash-sale-slide owl-carousel">
+            {% for product in all_products|slice:":6" %}
+            <!-- Flash Sale Card -->
+            <div class="card flash-sale-card">
+              <div class="card-body"><a href="{{ product.get_absolute_url }}"><img src="{% if product.get_image_url %}{{ product.get_image_url }}{% else %}{% static 'img/product/placeholder.png' %}{% endif %}" alt="{{ product.title }}"><span class="product-title">{{ product.title }}</span>
+                  <p class="sale-price">${{ product.price }}</p><span class="progress-title">On Sale</span>
+                  <!-- Progress Bar-->
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div></a></div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <!-- Top Products -->
+      <div class="top-products-area py-3">
+        <div class="container">
+          <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
+            <h6>Top Products</h6><a class="btn p-0" href="{% url 'shop' %}">View All<i class="ms-1 fa-solid fa-arrow-right-long"></i></a>
+          </div>
+          <div class="row g-2">
+            {% for product in all_products|slice:":6" %}
+            <!-- Product Card -->
+            <div class="col-6 col-md-4">
+              <div class="card product-card">
+                <div class="card-body">
+                  <!-- Badge--><span class="badge rounded-pill badge-warning">Sale</span>
+                  <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="fa-solid fa-heart"></i></a>
+                  <!-- Thumbnail --><a class="product-thumbnail d-block" href="{{ product.get_absolute_url }}"><img class="mb-2" src="{% if product.get_image_url %}{{ product.get_image_url }}{% else %}{% static 'img/product/placeholder.png' %}{% endif %}" alt="{{ product.title }}"></a>
+                  <!-- Product Title --><a class="product-title" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                  <!-- Product Price -->
+                  <p class="sale-price">${{ product.price }}</p>
+                  <!-- Rating -->
+                  <div class="product-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                  <!-- Add to Cart -->
+                  <button type="button" class="btn btn-success btn-sm" @click="addItem({{ product.id }})" title="Add to cart"><i class="fa-solid fa-plus"></i></button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="pb-3">
+        <div class="container">
+          <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
+            <h6>Collections</h6><a class="btn p-0" href="{% url 'shop' %}">
+               View All<i class="ms-1 fa-solid fa-arrow-right-long"></i></a>
+          </div>
+          <!-- Collections: a plain 2-up grid rather than Suha's demo carousel,
+               which crowded partial slides when there are only two -->
+          {% if collections %}
+            <div class="row g-2">
+              {% for collection in collections %}
+                <div class="col-6">
+                  <div class="card collection-card">
+                    <a href="{{ collection.get_absolute_url }}">
+                      {% if collection.get_image_url %}
+                        <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}">
+                      {% else %}
+                        <img src="{% static 'img/product/placeholder.png' %}" alt="{{ collection.name }}">
+                      {% endif %}
+                    </a>
+                    <div class="collection-title">
+                      <span>{{ collection.name }}</span>
+                      <span class="badge bg-danger">{{ collection.get_num_products }}</span>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="mb-0 text-muted">No collections yet.</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
-</section>
-{% endblock content %}
+    
+{% endblock %}

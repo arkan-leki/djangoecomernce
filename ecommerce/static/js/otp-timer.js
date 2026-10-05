@@ -1,7 +1,6 @@
 (function () {
     'use strict';
-    
-    // :: OTP Code resend Timer
+
     var count = 60;
     var counter = setInterval(timer, 1000); //1000 will run it every 1 second
 

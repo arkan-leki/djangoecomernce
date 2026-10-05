@@ -136,3 +136,8 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+# Suha template vendor packages (downloaded sources, not app code)
+# Covers any version, e.g. "Suha v3.0.1 PWA/" and "Suha v3.0.1 PWA.rar"
+Suha v*/
+Suha v*.rar
